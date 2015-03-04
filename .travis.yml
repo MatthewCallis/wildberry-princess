@@ -8,6 +8,7 @@ node_js:
 env:
   - CODECLIMATE_REPO_TOKEN=9ffe8abc7638fd859bf081174225ff9846ee5a476c8793bd4e8cc3ec90dae358
 before_script:
+  - npm install -g mocha
   - npm install -g istanbul
   - npm install -g codeclimate-test-reporter
 script:
@@ -16,7 +17,7 @@ script:
   - istanbul cover _mocha -- test/*_spec.js -R spec
 after_script:
   - cat coverage/lcov.info | codeclimate
-  - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+  - cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
 addons:
   code_climate:
     repo_token: 9ffe8abc7638fd859bf081174225ff9846ee5a476c8793bd4e8cc3ec90dae358
