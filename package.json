@@ -1,0 +1,46 @@
+{
+  "name": "wildberry-princess",
+  "version": "1.0.0",
+  "description": "JavaScript library for abstracting out Google Analytics (analytics.js).",
+  "author": "Matthew Callis <Matthew Callis>",
+  "contributors": [
+    {
+      "name": "Matthew Callis",
+      "email": "Matthew Callis"
+    }
+  ],
+  "main": "wildberry_princess.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MatthewCallis/wildberry-princess"
+  },
+  "bugs": {
+    "url": "https://github.com/MatthewCallis/wildberry-princess/issues"
+  },
+  "keywords": [
+    "analytics",
+    "wildberry",
+    "princess"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "^2.1.0",
+    "coffee-script": "^1.9.1",
+    "jquery": "^2",
+    "jsdom": "3.1.2",
+    "mocha": "^2.1.0",
+    "mocha-jsdom": "^0.2.1",
+    "sinon": "^1.12.2",
+    "sinon-chai": "^2.7.0"
+  },
+  "preferGlobal": false,
+  "private": false,
+  "license": "MIT",
+  "jam": {
+    "dependencies": {}
+  },
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha"
+  },
+  "github": "https://github.com/MatthewCallis/wildberry-princess"
+}
