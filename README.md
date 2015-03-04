@@ -1,7 +1,6 @@
 # Wildberry Princess
 
 [![Build Status](https://travis-ci.org/MatthewCallis/wildberry-princess.svg)](https://travis-ci.org/MatthewCallis/wildberry-princess)
-[![Coverage Status](http://img.shields.io/coveralls/MatthewCallis/wildberry-princess.svg?style=flat)](https://coveralls.io/r/MatthewCallis/wildberry-princess?branch=master)
 [![Dependency Status](https://david-dm.org/MatthewCallis/wildberry-princess.svg)](https://david-dm.org/MatthewCallis/wildberry-princess)
 [![devDependency Status](https://david-dm.org/MatthewCallis/wildberry-princess/dev-status.svg?style=flat)](https://david-dm.org/MatthewCallis/wildberry-princess#info=devDependencies)
 [![Test Coverage](https://codeclimate.com/github/MatthewCallis/wildberry-princess/badges/coverage.svg)](https://codeclimate.com/github/MatthewCallis/wildberry-princess)
