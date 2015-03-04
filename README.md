@@ -1,5 +1,7 @@
 # Wildberry Princess
 
+[![Build Status](https://travis-ci.org/MatthewCallis/wildberry-princess.svg)](https://travis-ci.org/MatthewCallis/wildberry-princess)
+
 ![Wildberry Princess](https://raw.githubusercontent.com/MatthewCallis/wildberry-princess/master/wildberry-princess.png)
 
 _-- "I found this note stabbed to my door! ... man."_
