@@ -26,6 +26,7 @@
   "devDependencies": {
     "blanket": "^1.1.6",
     "chai": "^2.1.0",
+    "codeclimate-test-reporter": "^0.0.4",
     "coffee-script": "^1.9.1",
     "coveralls": "^2.11.2",
     "jquery": "^2",
