@@ -24,12 +24,15 @@
   ],
   "dependencies": {},
   "devDependencies": {
+    "blanket": "^1.1.6",
     "chai": "^2.1.0",
     "coffee-script": "^1.9.1",
+    "coveralls": "^2.11.2",
     "jquery": "^2",
     "jsdom": "3.1.2",
     "mocha": "^2.1.0",
     "mocha-jsdom": "^0.2.1",
+    "mocha-lcov-reporter": "^0.0.2",
     "sinon": "^1.12.2",
     "sinon-chai": "^2.7.0"
   },
@@ -41,6 +44,11 @@
   },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha"
+  },
+  "config": {
+    "blanket": {
+      "pattern": "wildberry_princess*"
+    }
   },
   "github": "https://github.com/MatthewCallis/wildberry-princess"
 }
