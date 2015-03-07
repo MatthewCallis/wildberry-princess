@@ -8,7 +8,7 @@ jsdom = require('mocha-jsdom')
 chai.should()
 chai.use(sinonChai)
 
-WildberryPrincess = require('../wildberry_princess').WildberryPrincess
+WildberryPrincess = require('../build/wildberry_princess').WildberryPrincess
 
 describe 'WildberryPrincess', ->
   # Globals
@@ -33,13 +33,19 @@ describe 'WildberryPrincess', ->
     return
 
   describe '#trackUserActions', ->
-    it 'should add data and click handlers to the elements', ->
+    wbp_spy = null
+
+    beforeEach ->
       wbp_spy = sinon.spy(wbp, 'trackUserActions')
 
       button = document.createElement('button')
       button.textConent = 'First Button'
+      button.setAttribute('data-event-label', 'First Button')
       document.body.appendChild button
 
+      return
+
+    it 'should add data and click handlers to the elements', ->
       wbp.trackUserActions('button', 'Buttons')
 
       wbp_spy.should.have.been.calledOnce
@@ -47,16 +53,33 @@ describe 'WildberryPrincess', ->
       event_data = document.querySelector('button').data
       event_data.should.have.property('eventParams')
       event_data.eventParams.should.have.keys('category', 'action')
+      return
+
+    it 'should add label and value data when supplied', ->
+      wbp.trackUserActions('button', 'Buttons', 'Click', 'Label', 1)
+
+      wbp_spy.should.have.been.calledOnce
+
+      event_data = document.querySelector('button').data
+      event_data.should.have.property('eventParams')
+      event_data.eventParams.should.have.keys('category', 'action', 'label', 'value')
+      return
 
   describe '#clickHandler', ->
-    it 'should track clicks on elements', ->
+    wbp_click_spy = wbp_send_spy = button = null
+
+    beforeEach ->
       wbp_click_spy = sinon.spy(wbp, 'clickHandler')
       wbp_send_spy  = sinon.spy(wbp, 'sendPayload')
 
       button = document.createElement('button')
       button.innerText = 'First Button'
+      button.setAttribute('data-event-label', 'First Button')
       document.body.appendChild button
 
+      return
+
+    it 'should track clicks on elements', ->
       wbp.trackUserActions('button', 'Buttons')
 
       # Trigger Click
@@ -74,14 +97,54 @@ describe 'WildberryPrincess', ->
         hitType:       'event'
       global.window.ga.should.have.been.calledWith 'send', payload
 
+    it 'should not set a label unless it is provided', ->
+      button.removeAttribute('data-event-label')
+      wbp.trackUserActions('button', 'Buttons')
+
+      # Trigger Click
+      click_event = document.createEvent('HTMLEvents')
+      click_event.initEvent('click', true, false)
+      button.dispatchEvent(click_event)
+
+      wbp_click_spy.should.have.been.calledOnce
+      wbp_send_spy.should.have.been.calledOnce
+      global.window.ga.should.have.been.calledOnce
+      payload =
+        eventCategory: 'Buttons'
+        eventAction:   'Click'
+        hitType:       'event'
+      global.window.ga.should.have.been.calledWith 'send', payload
+
+    it 'should track clicks on elements with optional value', ->
+      wbp.trackUserActions('button', 'Buttons', 'Click', null, 1)
+
+      # Trigger Click
+      click_event = document.createEvent('HTMLEvents')
+      click_event.initEvent('click', true, false)
+      button.dispatchEvent(click_event)
+
+      wbp_click_spy.should.have.been.calledOnce
+      wbp_send_spy.should.have.been.calledOnce
+      global.window.ga.should.have.been.calledOnce
+      payload =
+        eventCategory: 'Buttons'
+        eventAction:   'Click'
+        eventLabel:    'First Button'
+        eventValue:    1
+        hitType:       'event'
+      global.window.ga.should.have.been.calledWith 'send', payload
+
       return
 
     return
 
   describe '#trackEvent', ->
-    it 'should track the event', ->
+    wbp_spy = null
+
+    beforeEach ->
       wbp_spy = sinon.spy(wbp, 'sendPayload')
 
+    it 'should track the event', ->
       wbp.trackEvent 'a', 'b', 'c', 'd'
 
       payload =
@@ -89,6 +152,40 @@ describe 'WildberryPrincess', ->
         eventAction:   'b'
         eventLabel:    'c'
         eventValue:    'd'
+        hitType:       'event'
+
+      wbp_spy.should.have.been.calledOnce
+      wbp_spy.should.have.been.calledWith payload
+
+      ga_spy.should.have.been.calledOnce
+      ga_spy.should.have.been.calledWith 'send', payload
+
+      return
+
+    it 'should track the event without a label', ->
+      wbp.trackEvent 'a', 'b', null, 'd'
+
+      payload =
+        eventCategory: 'a'
+        eventAction:   'b'
+        eventValue:    'd'
+        hitType:       'event'
+
+      wbp_spy.should.have.been.calledOnce
+      wbp_spy.should.have.been.calledWith payload
+
+      ga_spy.should.have.been.calledOnce
+      ga_spy.should.have.been.calledWith 'send', payload
+
+      return
+
+    it 'should track the event without a value', ->
+      wbp.trackEvent 'a', 'b', 'c'
+
+      payload =
+        eventCategory: 'a'
+        eventAction:   'b'
+        eventLabel:    'c'
         hitType:       'event'
 
       wbp_spy.should.have.been.calledOnce

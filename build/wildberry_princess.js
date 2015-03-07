@@ -35,29 +35,12 @@
     };
 
     WildberryPrincess.prototype.clickHandler = function(event) {
-      var element, eventParams, label, payload, ref;
+      var element, eventParams, label, payload;
       element = event.target;
-      eventParams = (ref = element.data) != null ? ref.eventParams : void 0;
-      if (!eventParams) {
-        return;
-      }
+      eventParams = element.data.eventParams;
       if (!(label = eventParams.label)) {
-        label = (function() {
-          switch (event.target.nodeName.toLowerCase()) {
-            case 'button':
-            case 'tab':
-            case 'a':
-              return element.innerText;
-            case 'input':
-            case 'select':
-            case 'textarea':
-              return element.getAttribute('name');
-            default:
-              return element.innerText;
-          }
-        })();
+        label = element.getAttribute('data-event-label');
       }
-      label = label != null ? label.trim() : void 0;
       payload = {
         hitType: 'event',
         eventCategory: eventParams.category,
@@ -98,6 +81,6 @@
 
   })();
 
-  (typeof exports !== "undefined" && exports !== null ? exports : window).WildberryPrincess = WildberryPrincess;
+  (typeof exports !== "undefined" && exports !== null ? exports : this).WildberryPrincess = WildberryPrincess;
 
 }).call(this);

@@ -16,7 +16,7 @@
 
   chai.use(sinonChai);
 
-  WildberryPrincess = require('../wildberry_princess').WildberryPrincess;
+  WildberryPrincess = require('../build/wildberry_princess').WildberryPrincess;
 
   describe('WildberryPrincess', function() {
     var ga_spy, wbp;
@@ -37,27 +37,46 @@
       wbp.should.itself.to.respondTo('sendPayload');
     });
     describe('#trackUserActions', function() {
-      return it('should add data and click handlers to the elements', function() {
-        var button, event_data, wbp_spy;
+      var wbp_spy;
+      wbp_spy = null;
+      beforeEach(function() {
+        var button;
         wbp_spy = sinon.spy(wbp, 'trackUserActions');
         button = document.createElement('button');
         button.textConent = 'First Button';
+        button.setAttribute('data-event-label', 'First Button');
         document.body.appendChild(button);
+      });
+      it('should add data and click handlers to the elements', function() {
+        var event_data;
         wbp.trackUserActions('button', 'Buttons');
         wbp_spy.should.have.been.calledOnce;
         event_data = document.querySelector('button').data;
         event_data.should.have.property('eventParams');
-        return event_data.eventParams.should.have.keys('category', 'action');
+        event_data.eventParams.should.have.keys('category', 'action');
+      });
+      return it('should add label and value data when supplied', function() {
+        var event_data;
+        wbp.trackUserActions('button', 'Buttons', 'Click', 'Label', 1);
+        wbp_spy.should.have.been.calledOnce;
+        event_data = document.querySelector('button').data;
+        event_data.should.have.property('eventParams');
+        event_data.eventParams.should.have.keys('category', 'action', 'label', 'value');
       });
     });
     describe('#clickHandler', function() {
-      it('should track clicks on elements', function() {
-        var button, click_event, payload, wbp_click_spy, wbp_send_spy;
+      var button, wbp_click_spy, wbp_send_spy;
+      wbp_click_spy = wbp_send_spy = button = null;
+      beforeEach(function() {
         wbp_click_spy = sinon.spy(wbp, 'clickHandler');
         wbp_send_spy = sinon.spy(wbp, 'sendPayload');
         button = document.createElement('button');
         button.innerText = 'First Button';
+        button.setAttribute('data-event-label', 'First Button');
         document.body.appendChild(button);
+      });
+      it('should track clicks on elements', function() {
+        var click_event, payload;
         wbp.trackUserActions('button', 'Buttons');
         click_event = document.createEvent('HTMLEvents');
         click_event.initEvent('click', true, false);
@@ -71,19 +90,86 @@
           eventLabel: 'First Button',
           hitType: 'event'
         };
+        return global.window.ga.should.have.been.calledWith('send', payload);
+      });
+      it('should not set a label unless it is provided', function() {
+        var click_event, payload;
+        button.removeAttribute('data-event-label');
+        wbp.trackUserActions('button', 'Buttons');
+        click_event = document.createEvent('HTMLEvents');
+        click_event.initEvent('click', true, false);
+        button.dispatchEvent(click_event);
+        wbp_click_spy.should.have.been.calledOnce;
+        wbp_send_spy.should.have.been.calledOnce;
+        global.window.ga.should.have.been.calledOnce;
+        payload = {
+          eventCategory: 'Buttons',
+          eventAction: 'Click',
+          hitType: 'event'
+        };
+        return global.window.ga.should.have.been.calledWith('send', payload);
+      });
+      it('should track clicks on elements with optional value', function() {
+        var click_event, payload;
+        wbp.trackUserActions('button', 'Buttons', 'Click', null, 1);
+        click_event = document.createEvent('HTMLEvents');
+        click_event.initEvent('click', true, false);
+        button.dispatchEvent(click_event);
+        wbp_click_spy.should.have.been.calledOnce;
+        wbp_send_spy.should.have.been.calledOnce;
+        global.window.ga.should.have.been.calledOnce;
+        payload = {
+          eventCategory: 'Buttons',
+          eventAction: 'Click',
+          eventLabel: 'First Button',
+          eventValue: 1,
+          hitType: 'event'
+        };
         global.window.ga.should.have.been.calledWith('send', payload);
       });
     });
     describe('#trackEvent', function() {
+      var wbp_spy;
+      wbp_spy = null;
+      beforeEach(function() {
+        return wbp_spy = sinon.spy(wbp, 'sendPayload');
+      });
       it('should track the event', function() {
-        var payload, wbp_spy;
-        wbp_spy = sinon.spy(wbp, 'sendPayload');
+        var payload;
         wbp.trackEvent('a', 'b', 'c', 'd');
         payload = {
           eventCategory: 'a',
           eventAction: 'b',
           eventLabel: 'c',
           eventValue: 'd',
+          hitType: 'event'
+        };
+        wbp_spy.should.have.been.calledOnce;
+        wbp_spy.should.have.been.calledWith(payload);
+        ga_spy.should.have.been.calledOnce;
+        ga_spy.should.have.been.calledWith('send', payload);
+      });
+      it('should track the event without a label', function() {
+        var payload;
+        wbp.trackEvent('a', 'b', null, 'd');
+        payload = {
+          eventCategory: 'a',
+          eventAction: 'b',
+          eventValue: 'd',
+          hitType: 'event'
+        };
+        wbp_spy.should.have.been.calledOnce;
+        wbp_spy.should.have.been.calledWith(payload);
+        ga_spy.should.have.been.calledOnce;
+        ga_spy.should.have.been.calledWith('send', payload);
+      });
+      it('should track the event without a value', function() {
+        var payload;
+        wbp.trackEvent('a', 'b', 'c');
+        payload = {
+          eventCategory: 'a',
+          eventAction: 'b',
+          eventLabel: 'c',
           hitType: 'event'
         };
         wbp_spy.should.have.been.calledOnce;

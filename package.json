@@ -9,7 +9,7 @@
       "email": "Matthew Callis"
     }
   ],
-  "main": "wildberry_princess.js",
+  "main": "build/wildberry_princess.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/MatthewCallis/wildberry-princess"
@@ -45,7 +45,10 @@
     "dependencies": {}
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha"
+    "coverage": "istanbul instrument --output lib-cov build/*.js && istanbul cover _mocha -- test/*_spec.js -R spec",
+    "lint": "coffeelint src/*.coffee",
+    "make": "coffee --compile --output build/ src/*",
+    "test": "coffee --compile --output test/ test/*.coffee && ./node_modules/mocha/bin/mocha"
   },
   "config": {
     "blanket": {

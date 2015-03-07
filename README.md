@@ -33,7 +33,10 @@ analytics.trackEvent('Model', 'Destroy', @constructorName)
 
 ### Testing
 
-`npm test`
+```shell
+npm run lint
+npm test
+```
 
 ## Contributing
 

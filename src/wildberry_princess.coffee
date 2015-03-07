@@ -21,19 +21,10 @@ class WildberryPrincess
 
   clickHandler: (event) =>
     element = event.target
-    eventParams = element.data?.eventParams
-
-    return  unless eventParams
+    eventParams = element.data.eventParams
 
     unless label = eventParams.label
-      label = switch event.target.nodeName.toLowerCase()
-        when 'button', 'tab', 'a'
-          element.innerText
-        when 'input', 'select', 'textarea'
-          element.getAttribute('name')
-        else
-          element.innerText
-    label = label?.trim()
+      label = element.getAttribute('data-event-label')
 
     payload =
       hitType: 'event'
@@ -60,4 +51,4 @@ class WildberryPrincess
     if window.ga?
       window.ga 'send', payload
 
-(exports ? window).WildberryPrincess = WildberryPrincess
+(exports ? this).WildberryPrincess = WildberryPrincess

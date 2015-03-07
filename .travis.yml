@@ -13,7 +13,7 @@ before_script:
   - npm install -g codeclimate-test-reporter
 script:
   - npm test
-  - istanbul instrument --output lib-cov wildberry_princess.js
+  - istanbul instrument --output lib-cov build/*.js
   - istanbul cover _mocha -- test/*_spec.js -R spec
 after_script:
   - cat coverage/lcov.info | codeclimate
