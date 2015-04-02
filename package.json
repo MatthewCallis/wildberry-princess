@@ -24,7 +24,6 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "blanket": "^1.1.6",
     "chai": "^2.1.0",
     "codeclimate-test-reporter": "^0.0.4",
     "coffee-script": "^1.9.1",
@@ -49,11 +48,6 @@
     "lint": "coffeelint src/*.coffee",
     "make": "coffee --compile --output build/ src/*",
     "test": "coffee --compile --output test/ test/*.coffee && ./node_modules/mocha/bin/mocha"
-  },
-  "config": {
-    "blanket": {
-      "pattern": "wildberry_princess*"
-    }
   },
   "github": "https://github.com/MatthewCallis/wildberry-princess"
 }

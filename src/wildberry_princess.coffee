@@ -1,7 +1,11 @@
 # https://developers.google.com/analytics/devguides/collection/analyticsjs/advanced
 # https://developers.google.com/analytics/devguides/collection/analyticsjs/events
+# https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference
 class WildberryPrincess
   constructor: ->
+
+  getLabel: (element) ->
+    element.getAttribute('data-event-label')
 
   trackUserActions: (selector, category, action, label, value) ->
     params =
@@ -21,10 +25,11 @@ class WildberryPrincess
 
   clickHandler: (event) =>
     element = event.target
-    eventParams = element.data.eventParams
+    eventParams = element.data?.eventParams
 
-    unless label = eventParams.label
-      label = element.getAttribute('data-event-label')
+    return  unless eventParams
+
+    label = @getLabel(element)  unless label = eventParams.label
 
     payload =
       hitType: 'event'
