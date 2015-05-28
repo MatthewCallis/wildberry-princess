@@ -1,36 +1,41 @@
-sinon = require('sinon')
-sinonChai = require('sinon-chai')
-chai = require('chai')
-should = chai.should()
+# Are we in iojs?
+if require?
+  sinon = require('sinon')
+  sinonChai = require('sinon-chai')
+  chai = require('chai')
+  global.should = chai.should()
+  global.expect = chai.expect
+  jsdom = require('mocha-jsdom')
 
-jsdom = require('mocha-jsdom')
+  chai.should()
+  chai.use(sinonChai)
 
-chai.should()
-chai.use(sinonChai)
+  WildberryPrincess = require('../build/wildberry_princess').WildberryPrincess
 
-WildberryPrincess = require('../build/wildberry_princess').WildberryPrincess
+  jsdom()
+else
+  WildberryPrincess = window.WildberryPrincess
+  sinon  = window.sinon
 
 describe 'WildberryPrincess', ->
   # Globals
+  jQuery = jQuery or null
   wbp = ga_spy = null
-  jsdom()
+  transaction_id = transaction = item = key = value = payload = null
 
   beforeEach ->
-    global.window.ga = ->
-    ga_spy = sinon.spy(global.window, 'ga')
+    window.ga = ->
+    ga_spy = sinon.spy(window, 'ga')
     wbp = new WildberryPrincess()
-    return
 
   it 'should contruct without issue', ->
     wbp.should.be.an.instanceof(WildberryPrincess)
-    return
 
   it 'should have known functions', ->
     wbp.should.itself.to.respondTo('trackUserActions')
     wbp.should.itself.to.respondTo('clickHandler')
     wbp.should.itself.to.respondTo('trackEvent')
     wbp.should.itself.to.respondTo('sendPayload')
-    return
 
   describe '#trackUserActions', ->
     wbp_spy = null
@@ -43,8 +48,6 @@ describe 'WildberryPrincess', ->
       button.setAttribute('data-event-label', 'First Button')
       document.body.appendChild button
 
-      return
-
     it 'should add data and click handlers to the elements', ->
       wbp.trackUserActions('button', 'Buttons')
 
@@ -53,7 +56,6 @@ describe 'WildberryPrincess', ->
       event_data = document.querySelector('button').data
       event_data.should.have.property('eventParams')
       event_data.eventParams.should.have.keys('category', 'action')
-      return
 
     it 'should add label and value data when supplied', ->
       wbp.trackUserActions('button', 'Buttons', 'Click', 'Label', 1)
@@ -63,7 +65,6 @@ describe 'WildberryPrincess', ->
       event_data = document.querySelector('button').data
       event_data.should.have.property('eventParams')
       event_data.eventParams.should.have.keys('category', 'action', 'label', 'value')
-      return
 
   describe '#clickHandler', ->
     wbp_click_spy = wbp_send_spy = button = null
@@ -77,8 +78,6 @@ describe 'WildberryPrincess', ->
       button.setAttribute('data-event-label', 'First Button')
       document.body.appendChild button
 
-      return
-
     it 'should track clicks on elements', ->
       wbp.trackUserActions('button', 'Buttons')
 
@@ -89,13 +88,13 @@ describe 'WildberryPrincess', ->
 
       wbp_click_spy.should.have.been.calledOnce
       wbp_send_spy.should.have.been.calledOnce
-      global.window.ga.should.have.been.calledOnce
+      window.ga.should.have.been.calledOnce
       payload =
         eventCategory: 'Buttons'
         eventAction:   'Click'
         eventLabel:    'First Button'
         hitType:       'event'
-      global.window.ga.should.have.been.calledWith 'send', payload
+      window.ga.should.have.been.calledWith 'send', payload
 
     it 'should not set a label unless it is provided', ->
       button.removeAttribute('data-event-label')
@@ -108,12 +107,12 @@ describe 'WildberryPrincess', ->
 
       wbp_click_spy.should.have.been.calledOnce
       wbp_send_spy.should.have.been.calledOnce
-      global.window.ga.should.have.been.calledOnce
+      window.ga.should.have.been.calledOnce
       payload =
         eventCategory: 'Buttons'
         eventAction:   'Click'
         hitType:       'event'
-      global.window.ga.should.have.been.calledWith 'send', payload
+      window.ga.should.have.been.calledWith 'send', payload
 
     it 'should track clicks on elements with optional value', ->
       wbp.trackUserActions('button', 'Buttons', 'Click', null, 1)
@@ -125,18 +124,21 @@ describe 'WildberryPrincess', ->
 
       wbp_click_spy.should.have.been.calledOnce
       wbp_send_spy.should.have.been.calledOnce
-      global.window.ga.should.have.been.calledOnce
+      window.ga.should.have.been.calledOnce
       payload =
         eventCategory: 'Buttons'
         eventAction:   'Click'
         eventLabel:    'First Button'
         eventValue:    1
         hitType:       'event'
-      global.window.ga.should.have.been.calledWith 'send', payload
+      window.ga.should.have.been.calledWith 'send', payload
 
-      return
+    it 'should return when there is no event', ->
+      wbp.clickHandler()
 
-    return
+      wbp_click_spy.should.have.been.calledOnce
+      wbp_send_spy.should.not.have.been.calledOnce
+      window.ga.should.not.have.been.calledOnce
 
   describe '#trackEvent', ->
     wbp_spy = null
@@ -160,8 +162,6 @@ describe 'WildberryPrincess', ->
       ga_spy.should.have.been.calledOnce
       ga_spy.should.have.been.calledWith 'send', payload
 
-      return
-
     it 'should track the event without a label', ->
       wbp.trackEvent 'a', 'b', null, 'd'
 
@@ -176,8 +176,6 @@ describe 'WildberryPrincess', ->
 
       ga_spy.should.have.been.calledOnce
       ga_spy.should.have.been.calledWith 'send', payload
-
-      return
 
     it 'should track the event without a value', ->
       wbp.trackEvent 'a', 'b', 'c'
@@ -194,14 +192,122 @@ describe 'WildberryPrincess', ->
       ga_spy.should.have.been.calledOnce
       ga_spy.should.have.been.calledWith 'send', payload
 
-      return
+  describe '#trackPageView', ->
+    wbp_spy = null
 
-    return
+    beforeEach ->
+      wbp_spy = sinon.spy(wbp, 'sendPayload')
+
+    it 'should track the page view', ->
+      wbp.trackPageView 'a', 'b'
+
+      payload =
+        page:    'a'
+        title:   'b'
+        hitType: 'pageview'
+
+      wbp_spy.should.have.been.calledOnce
+      wbp_spy.should.have.been.calledWith payload
+
+      ga_spy.should.have.been.calledOnce
+      ga_spy.should.have.been.calledWith 'send', payload
+
+    it 'should track the page view without a page provided', ->
+      wbp.trackPageView null, 'b'
+
+      payload =
+        page:    window.location.pathname
+        title:   'b'
+        hitType: 'pageview'
+
+      wbp_spy.should.have.been.calledOnce
+      wbp_spy.should.have.been.calledWith payload
+
+      ga_spy.should.have.been.calledOnce
+      ga_spy.should.have.been.calledWith 'send', payload
+
+    it 'should track the page view without a title', ->
+      wbp.trackPageView 'a', null
+
+      payload =
+        page:    'a'
+        title:   'Mocha'
+        hitType: 'pageview'
+
+      wbp_spy.should.have.been.calledOnce
+      wbp_spy.should.have.been.calledWith payload
+
+      ga_spy.should.have.been.calledOnce
+      ga_spy.should.have.been.calledWith 'send', payload
 
   describe '#sendPayload', ->
-    it 'should send the payload', ->
+    beforeEach ->
+      transaction_id = "#{Date.now()}"
+      transaction =
+        id:          transaction_id
+        affiliation: "Candy Kingdom"
+        revenue:     123
+        shipping:    '0'
+        tax:         '0'
+
+      item =
+        id:       transaction_id
+        name:     'b'
+        category: 'a'
+        price:    123
+        quantity: 1
+
+    it 'should send the payload when there is GA', ->
       ga_spy.callCount.should.equal 0
 
+      wbp.trackEcommerce('clear')
+      ga_spy.should.have.been.calledWith 'ecommerce:clear'
+
+      wbp.trackEcommerce('addTransaction', transaction)
+      ga_spy.should.have.been.calledWith 'ecommerce:addTransaction', transaction
+
+      wbp.trackEcommerce('addItem', item)
+      ga_spy.should.have.been.calledWith 'ecommerce:addItem', item
+
+      wbp.trackEcommerce('send')
+      ga_spy.should.have.been.calledWith 'ecommerce:send'
+
+    it 'should not send the payload when there is no GA', ->
+      window.ga = null
+
+      ga_spy.callCount.should.equal 0
+
+      wbp.trackEcommerce('clear')
+      ga_spy.should.not.have.been.calledOnce
+
+      wbp.trackEcommerce('addTransaction', transaction)
+      ga_spy.should.not.have.been.calledOnce
+
+      wbp.trackEcommerce('addItem', item)
+      ga_spy.should.not.have.been.calledOnce
+
+      wbp.trackEcommerce('send')
+      ga_spy.should.not.have.been.calledOnce
+
+  describe '#set', ->
+    beforeEach ->
+      key = 'my-key'
+      value = 'my-value'
+
+    it 'should set the key to the value when there is GA', ->
+      ga_spy.callCount.should.equal 0
+      wbp.set key, value
+      ga_spy.should.have.been.calledOnce
+      ga_spy.should.have.been.calledWith 'set', key, value
+
+    it 'should set the key to the value when there is GA', ->
+      window.ga = null
+      ga_spy.callCount.should.equal 0
+      wbp.set key, value
+      ga_spy.should.not.have.been.calledOnce
+
+  describe '#sendPayload', ->
+    beforeEach ->
       payload =
         hitType: 'event'
         eventCategory: 'my-category'
@@ -209,13 +315,14 @@ describe 'WildberryPrincess', ->
         eventLabel: 'my-label'
         eventValue: 'my-value'
 
+    it 'should send the payload when there is GA', ->
+      ga_spy.callCount.should.equal 0
       wbp.sendPayload payload
-
       ga_spy.should.have.been.calledOnce
       ga_spy.should.have.been.calledWith 'send', payload
 
-      return
-
-    return
-
-  return
+    it 'should not send the payload when there is no GA', ->
+      window.ga = null
+      ga_spy.callCount.should.equal 0
+      wbp.sendPayload payload
+      ga_spy.should.not.have.been.calledOnce

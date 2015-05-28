@@ -20,6 +20,10 @@ Wildberry Princess is a JavaScript library for abstracting out Google Analytics 
 # Setup
 analytics = new WildberryPrincess()
 
+# Set dimensions and users.
+analytics.set('&uid', current_user_id) if current_user_id?
+analytics.set('dimension1', app_id)  if app_id?
+
 # Track user actions, specifically clicks, where the label is the text content (button, div, tab, etc.) or form input name (input, select, textarea).
 # analytics.trackUserActions(selector, category, action, label, value)
 analytics.trackUserActions('button', 'Button')
@@ -29,13 +33,43 @@ analytics.trackUserActions('tab', 'Tab')
 # Send events anywhere, like Backbone model actions.
 # analytics.trackEvent(category, action, label, value)
 analytics.trackEvent('Model', 'Destroy', @constructorName)
+
+# Track page views.
+Apptentive.analytics.trackPageView('/fake-page', 'A Cool Fake Title')
+
+# Send eCommerce data.
+transaction_id = "#{@model.id}_#{Date.now()}"
+transaction =
+  id:          transaction_id
+  affiliation: "Candy Kingdom"
+  revenue:     price
+  shipping:    '0'
+  tax:         '0'
+
+item =
+  id:       transaction_id
+  name:     name
+  category: category
+  price:    price
+  quantity: 1
+
+analytics.trackEcommerce('clear')
+analytics.trackEcommerce('addTransaction', transaction)
+analytics.trackEcommerce('addItem', item)
+analytics.trackEcommerce('send')
 ```
 
 ### Testing
 
 ```shell
 npm run lint
-npm test
+npm run make
+npm run instrument
+npm run test-phantomjs
+npm run coverage-report
+npm run make-dist-min
+# or
+npm run lint && npm run make && npm run instrument && npm run test-phantomjs && npm run coverage-report && npm run make-dist-min
 ```
 
 ## Contributing

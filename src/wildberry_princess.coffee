@@ -1,6 +1,7 @@
 # https://developers.google.com/analytics/devguides/collection/analyticsjs/advanced
 # https://developers.google.com/analytics/devguides/collection/analyticsjs/events
 # https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference
+# https://developers.google.com/analytics/devguides/collection/analyticsjs/custom-dims-mets
 class WildberryPrincess
   constructor: ->
 
@@ -24,6 +25,7 @@ class WildberryPrincess
       i++
 
   clickHandler: (event) =>
+    return unless event
     element = event.target
     eventParams = element.data?.eventParams
 
@@ -51,6 +53,24 @@ class WildberryPrincess
     payload.eventValue = value  if value
 
     @sendPayload payload
+
+  trackPageView: (page, title) ->
+    page or= window.location.pathname
+    title or= document.title
+    payload =
+      hitType: 'pageview'
+      page: page
+      title: title
+
+    @sendPayload payload
+
+  trackEcommerce: (action, payload) ->
+    if window.ga?
+      window.ga "ecommerce:#{action}", payload
+
+  set: (key, value) ->
+    if window.ga?
+      window.ga 'set', key, value
 
   sendPayload: (payload) ->
     if window.ga?

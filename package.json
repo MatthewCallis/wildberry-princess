@@ -9,7 +9,7 @@
       "email": "Matthew Callis"
     }
   ],
-  "main": "build/wildberry_princess.js",
+  "main": "dist/wildberry-princess.min.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/MatthewCallis/wildberry-princess"
@@ -35,7 +35,8 @@
     "mocha-jsdom": "^0.2.1",
     "mocha-lcov-reporter": "^0.0.2",
     "sinon": "^1.12.2",
-    "sinon-chai": "^2.7.0"
+    "sinon-chai": "^2.7.0",
+    "uglify-js": "^2.4.20"
   },
   "preferGlobal": false,
   "private": false,
@@ -44,10 +45,16 @@
     "dependencies": {}
   },
   "scripts": {
-    "coverage": "istanbul instrument --output lib-cov build/*.js && istanbul cover _mocha -- test/*_spec.js -R spec",
+    "instrument": "istanbul instrument --output build-coverage build/",
+    "coverage": "istanbul instrument --output build-coverage build/ && istanbul cover _mocha -- test/*_spec.js -R spec",
+    "coverage-report": "istanbul report --root coverage lcov",
     "lint": "coffeelint src/*.coffee",
     "make": "coffee --compile --output build/ src/*",
-    "test": "coffee --compile --output test/ test/*.coffee && ./node_modules/mocha/bin/mocha"
+    "make-dist": "uglifyjs build/*.js --beautify --indent 2 --verbose --output dist/wildberry-princess.js",
+    "make-dist-min": "uglifyjs build/*.js --compress --mangle --verbose --output dist/wildberry-princess.min.js",
+    "test": "coffee --compile --output test/ test/*.coffee && ./node_modules/mocha/bin/mocha",
+    "test-phantomjs-ios": "mocha-phantomjs --agent \"Mozilla/6.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/8.0 Mobile/10A5376e Safari/8536.25\" --setting localToRemoteUrlAccessEnabled=true --setting webSecurityEnabled=false test/index.html --hooks ./phantom_hooks.js --timeout 25000",
+    "test-phantomjs": "coffee --compile --output test/ test/*.coffee && mocha-phantomjs --setting localToRemoteUrlAccessEnabled=true --setting webSecurityEnabled=false test/index.html --hooks ./phantom_hooks.js --timeout 25000"
   },
   "github": "https://github.com/MatthewCallis/wildberry-princess"
 }

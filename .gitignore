@@ -3,3 +3,4 @@ node_modules/
 .coveralls.yml
 coverage/
 lib-cov
+build-coverage/
