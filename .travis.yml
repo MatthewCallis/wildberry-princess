@@ -13,10 +13,9 @@ after_install:
   - sudo npm install -g phantomjs
 before_script:
   - phantomjs --version
-  - npm install -g mocha
+  - npm install -g mocha-phantomjs
   - npm install -g istanbul
   - npm install -g codeclimate-test-reporter
-  # - npm install
 script:
   - npm run test-phantomjs
   - istanbul instrument --output lib-cov build/*.js
