@@ -5,14 +5,11 @@ if require?
   chai = require('chai')
   global.should = chai.should()
   global.expect = chai.expect
-  jsdom = require('mocha-jsdom')
 
   chai.should()
   chai.use(sinonChai)
 
   WildberryPrincess = require('../build/wildberry_princess').WildberryPrincess
-
-  jsdom()
 else
   WildberryPrincess = window.WildberryPrincess
   sinon  = window.sinon

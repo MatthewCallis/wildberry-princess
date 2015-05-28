@@ -21,9 +21,6 @@ script:
   - npm run instrument
   - npm run test-phantomjs
   - npm run coverage-report
-  # - npm run test-phantomjs
-  # - istanbul instrument --output lib-cov build/*.js
-  # - istanbul cover _mocha -- test/*_spec.js -R spec
 after_script:
   - cat coverage/lcov.info | codeclimate
   - cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
