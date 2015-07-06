@@ -1,3 +1,9 @@
+## 1.2 (July 6th, 2015)
+
+* Added support for Kissmetrics.
+* Added settings to enable / disable analytics components.
+* Updated to newest way to set users in Google Analytics.
+
 ## 1.1 (May 27, 2015)
 
 * Added `trackEcommerce`.

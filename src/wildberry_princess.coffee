@@ -3,12 +3,17 @@
 # https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference
 # https://developers.google.com/analytics/devguides/collection/analyticsjs/custom-dims-mets
 class WildberryPrincess
-  constructor: ->
+  defaults =
+    useGoogleAnalytics: true
+    useKissMetrics: true
+
+  constructor: (options = {}) ->
+    @settings = @merge(defaults, options)
 
   getLabel: (element) ->
     element.getAttribute('data-event-label')
 
-  trackUserActions: (selector, category, action, label, value) ->
+  trackUserActions: (selector, category, action, label, value) =>
     params =
       category: category
       action:   action or 'Click'
@@ -33,18 +38,43 @@ class WildberryPrincess
 
     label = @getLabel(element)  unless label = eventParams.label
 
-    payload =
-      hitType: 'event'
-      eventCategory: eventParams.category
-      eventAction:   eventParams.action
-    payload.eventLabel = label  if label
-    payload.eventValue = eventParams.value  if eventParams.value
+    if @settings.useGoogleAnalytics
+      payload =
+        hitType: 'event'
+        eventCategory: eventParams.category
+        eventAction:   eventParams.action
+      payload.eventLabel = label  if label
+      payload.eventValue = eventParams.value  if eventParams.value
 
-    @sendPayload payload
+      @sendPayloadGA payload
+
+    if @settings.useKissMetrics
+      label = "#{eventParams.category} #{label} #{eventParams.action}"
+      payload =
+        category: eventParams.category
+        action:   eventParams.action
+      payload.label = label  if label
+      payload.value = eventParams.value  if eventParams.value
+
+      @trackEventKM label, payload
 
     return
 
-  trackEvent: (category, action, label, value) ->
+  trackEvent: (category, action, label, value) =>
+    if @settings.useGoogleAnalytics
+      @trackEventGA(category, action, label, value)
+
+    if @settings.useKissMetrics
+      label = "#{category} #{label} #{action}"
+      payload =
+        category: category
+        action:   action
+      payload.label = label  if label
+      payload.value = value  if value
+
+      @trackEventKM label, payload
+
+  trackEventGA: (category, action, label, value) =>
     payload =
       hitType: 'event'
       eventCategory: category
@@ -52,9 +82,12 @@ class WildberryPrincess
     payload.eventLabel = label  if label
     payload.eventValue = value  if value
 
-    @sendPayload payload
+    @sendPayloadGA payload
 
-  trackPageView: (page, title) ->
+  trackEventKM: (label, payload) =>
+    @sendPayloadKM 'record', label, payload
+
+  trackPageView: (page, title) =>
     page or= window.location.pathname
     title or= document.title
     payload =
@@ -62,18 +95,53 @@ class WildberryPrincess
       page: page
       title: title
 
-    @sendPayload payload
+    @sendPayloadGA payload
 
-  trackEcommerce: (action, payload) ->
-    if window.ga?
+  trackEcommerce: (action, payload) =>
+    if window.ga? and @settings.useGoogleAnalytics
       window.ga "ecommerce:#{action}", payload
 
-  set: (key, value) ->
+  set: (key, value) =>
+    @setGA(key, value) if @settings.useGoogleAnalytics
+    if @settings.useKissMetrics
+      @setKM(key, value)
+
+  setGA: (key, value) ->
     if window.ga?
       window.ga 'set', key, value
 
-  sendPayload: (payload) ->
+  setKM: (key, value) =>
+    data = {}
+    data[key] = value
+    @sendPayloadKM('set', data, null)
+
+  identify: (user_id = 'anonymous') =>
+    # https://developers.google.com/analytics/devguides/collection/analyticsjs/user-id
+    # https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#userId
+    # http://support.kissmetrics.com/apis/common-methods#identify
+    @setGA('userId', user_id) if @settings.useGoogleAnalytics and user_id isnt 'anonymous'
+    @sendPayloadKM('identify', user_id) if @settings.useKissMetrics
+
+  clearIdentity: =>
+    # http://support.kissmetrics.com/advanced/multiple-people-same-browser/
+    @sendPayloadKM('clearIdentity') if @settings.useKissMetrics
+
+  sendPayloadGA: (payload) ->
     if window.ga?
       window.ga 'send', payload
+
+  sendPayloadKM: (action, payload, data) ->
+    # http://support.kissmetrics.com/apis/common-methods
+    if window._kmq?
+      output = [action]
+      output.push payload if payload
+      output.push data if data
+
+      window._kmq.push output
+
+  merge: (input, options) ->
+    output = JSON.parse(JSON.stringify(input))
+    output[k] = v  for k, v of options
+    output
 
 (exports ? this).WildberryPrincess = WildberryPrincess

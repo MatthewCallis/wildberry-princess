@@ -10,19 +10,27 @@
 
 _-- "I found this note stabbed to my door! ... man."_
 
-Wildberry Princess is a JavaScript library for abstracting out Google Analytics (analytics.js), and perhaps other analytics platforms in the future.
+Wildberry Princess is a JavaScript library for abstracting out Google Analytics (analytics.js), KissMetrics, and perhaps other analytics platforms in the future.
 
 ## Usage
 
 ```coffeescript
 # Google Analytics initialized somewhere...
+# Kissmetrics initialized somewhere...
 
 # Setup
-analytics = new WildberryPrincess()
+analytics = new WildberryPrincess(
+  useGoogleAnalytics: true
+  useKissMetrics: true
+)
 
 # Set dimensions and users.
-analytics.set('&uid', current_user_id) if current_user_id?
+analytics.identify(current_user_id) if current_user_id?
 analytics.set('dimension1', app_id)  if app_id?
+
+# Or more specifically:
+analytics.setGA('dimension1', app_id)  if app_id?
+analytics.setKM('app_id', app_id)  if app_id?
 
 # Track user actions, specifically clicks, where the label is the text content (button, div, tab, etc.) or form input name (input, select, textarea).
 # analytics.trackUserActions(selector, category, action, label, value)
@@ -32,9 +40,11 @@ analytics.trackUserActions('tab', 'Tab')
 
 # Send events anywhere, like Backbone model actions.
 # analytics.trackEvent(category, action, label, value)
+# analytics.trackEventGA(category, action, label, value)
+# analytics.trackEventKM(label, payload)
 analytics.trackEvent('Model', 'Destroy', @constructorName)
 
-# Track page views.
+# Track page views. Currently, KissMetrics is not included here to avoid event bloat.
 Apptentive.analytics.trackPageView('/fake-page', 'A Cool Fake Title')
 
 # Send eCommerce data.

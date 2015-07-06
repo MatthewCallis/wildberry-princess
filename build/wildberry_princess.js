@@ -4,8 +4,29 @@
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   WildberryPrincess = (function() {
-    function WildberryPrincess() {
+    var defaults;
+
+    defaults = {
+      useGoogleAnalytics: true,
+      useKissMetrics: true
+    };
+
+    function WildberryPrincess(options) {
+      if (options == null) {
+        options = {};
+      }
+      this.clearIdentity = bind(this.clearIdentity, this);
+      this.identify = bind(this.identify, this);
+      this.setKM = bind(this.setKM, this);
+      this.set = bind(this.set, this);
+      this.trackEcommerce = bind(this.trackEcommerce, this);
+      this.trackPageView = bind(this.trackPageView, this);
+      this.trackEventKM = bind(this.trackEventKM, this);
+      this.trackEventGA = bind(this.trackEventGA, this);
+      this.trackEvent = bind(this.trackEvent, this);
       this.clickHandler = bind(this.clickHandler, this);
+      this.trackUserActions = bind(this.trackUserActions, this);
+      this.settings = this.merge(defaults, options);
     }
 
     WildberryPrincess.prototype.getLabel = function(element) {
@@ -51,21 +72,58 @@
       if (!(label = eventParams.label)) {
         label = this.getLabel(element);
       }
-      payload = {
-        hitType: 'event',
-        eventCategory: eventParams.category,
-        eventAction: eventParams.action
-      };
-      if (label) {
-        payload.eventLabel = label;
+      if (this.settings.useGoogleAnalytics) {
+        payload = {
+          hitType: 'event',
+          eventCategory: eventParams.category,
+          eventAction: eventParams.action
+        };
+        if (label) {
+          payload.eventLabel = label;
+        }
+        if (eventParams.value) {
+          payload.eventValue = eventParams.value;
+        }
+        this.sendPayloadGA(payload);
       }
-      if (eventParams.value) {
-        payload.eventValue = eventParams.value;
+      if (this.settings.useKissMetrics) {
+        label = eventParams.category + " " + label + " " + eventParams.action;
+        payload = {
+          category: eventParams.category,
+          action: eventParams.action
+        };
+        if (label) {
+          payload.label = label;
+        }
+        if (eventParams.value) {
+          payload.value = eventParams.value;
+        }
+        this.trackEventKM(label, payload);
       }
-      this.sendPayload(payload);
     };
 
     WildberryPrincess.prototype.trackEvent = function(category, action, label, value) {
+      var payload;
+      if (this.settings.useGoogleAnalytics) {
+        this.trackEventGA(category, action, label, value);
+      }
+      if (this.settings.useKissMetrics) {
+        label = category + " " + label + " " + action;
+        payload = {
+          category: category,
+          action: action
+        };
+        if (label) {
+          payload.label = label;
+        }
+        if (value) {
+          payload.value = value;
+        }
+        return this.trackEventKM(label, payload);
+      }
+    };
+
+    WildberryPrincess.prototype.trackEventGA = function(category, action, label, value) {
       var payload;
       payload = {
         hitType: 'event',
@@ -78,7 +136,11 @@
       if (value) {
         payload.eventValue = value;
       }
-      return this.sendPayload(payload);
+      return this.sendPayloadGA(payload);
+    };
+
+    WildberryPrincess.prototype.trackEventKM = function(label, payload) {
+      return this.sendPayloadKM('record', label, payload);
     };
 
     WildberryPrincess.prototype.trackPageView = function(page, title) {
@@ -90,25 +152,83 @@
         page: page,
         title: title
       };
-      return this.sendPayload(payload);
+      return this.sendPayloadGA(payload);
     };
 
     WildberryPrincess.prototype.trackEcommerce = function(action, payload) {
-      if (window.ga != null) {
+      if ((window.ga != null) && this.settings.useGoogleAnalytics) {
         return window.ga("ecommerce:" + action, payload);
       }
     };
 
     WildberryPrincess.prototype.set = function(key, value) {
+      if (this.settings.useGoogleAnalytics) {
+        this.setGA(key, value);
+      }
+      if (this.settings.useKissMetrics) {
+        return this.setKM(key, value);
+      }
+    };
+
+    WildberryPrincess.prototype.setGA = function(key, value) {
       if (window.ga != null) {
         return window.ga('set', key, value);
       }
     };
 
-    WildberryPrincess.prototype.sendPayload = function(payload) {
+    WildberryPrincess.prototype.setKM = function(key, value) {
+      var data;
+      data = {};
+      data[key] = value;
+      return this.sendPayloadKM('set', data, null);
+    };
+
+    WildberryPrincess.prototype.identify = function(user_id) {
+      if (user_id == null) {
+        user_id = 'anonymous';
+      }
+      if (this.settings.useGoogleAnalytics && user_id !== 'anonymous') {
+        this.setGA('userId', user_id);
+      }
+      if (this.settings.useKissMetrics) {
+        return this.sendPayloadKM('identify', user_id);
+      }
+    };
+
+    WildberryPrincess.prototype.clearIdentity = function() {
+      if (this.settings.useKissMetrics) {
+        return this.sendPayloadKM('clearIdentity');
+      }
+    };
+
+    WildberryPrincess.prototype.sendPayloadGA = function(payload) {
       if (window.ga != null) {
         return window.ga('send', payload);
       }
+    };
+
+    WildberryPrincess.prototype.sendPayloadKM = function(action, payload, data) {
+      var output;
+      if (window._kmq != null) {
+        output = [action];
+        if (payload) {
+          output.push(payload);
+        }
+        if (data) {
+          output.push(data);
+        }
+        return window._kmq.push(output);
+      }
+    };
+
+    WildberryPrincess.prototype.merge = function(input, options) {
+      var k, output, v;
+      output = JSON.parse(JSON.stringify(input));
+      for (k in options) {
+        v = options[k];
+        output[k] = v;
+      }
+      return output;
     };
 
     return WildberryPrincess;
