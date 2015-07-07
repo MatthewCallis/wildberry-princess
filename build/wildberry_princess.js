@@ -60,18 +60,16 @@
     };
 
     WildberryPrincess.prototype.clickHandler = function(event) {
-      var element, eventParams, label, payload, ref;
+      var element, eventParams, label, payload;
       if (!event) {
         return;
       }
       element = event.target;
-      eventParams = (ref = element.data) != null ? ref.eventParams : void 0;
-      if (!eventParams) {
+      if (!element) {
         return;
       }
-      if (!(label = eventParams.label)) {
-        label = this.getLabel(element);
-      }
+      eventParams = element.data.eventParams;
+      label = eventParams.label ? eventParams.label : this.getLabel(element);
       if (this.settings.useGoogleAnalytics) {
         payload = {
           hitType: 'event',
@@ -87,7 +85,6 @@
         this.sendPayloadGA(payload);
       }
       if (this.settings.useKissMetrics) {
-        label = eventParams.category + " " + label + " " + eventParams.action;
         payload = {
           category: eventParams.category,
           action: eventParams.action
@@ -98,7 +95,7 @@
         if (eventParams.value) {
           payload.value = eventParams.value;
         }
-        this.trackEventKM(label, payload);
+        this.trackEventKM(eventParams.category + ": " + label + " (" + eventParams.action + ")", payload);
       }
     };
 
@@ -108,7 +105,6 @@
         this.trackEventGA(category, action, label, value);
       }
       if (this.settings.useKissMetrics) {
-        label = category + " " + label + " " + action;
         payload = {
           category: category,
           action: action
@@ -119,7 +115,7 @@
         if (value) {
           payload.value = value;
         }
-        return this.trackEventKM(label, payload);
+        return this.trackEventKM(category + ": " + label + " (" + action + ")", payload);
       }
     };
 

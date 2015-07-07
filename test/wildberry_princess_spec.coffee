@@ -109,6 +109,9 @@ describe 'WildberryPrincess', ->
       button.setAttribute('data-event-label', 'First Button')
       document.body.appendChild button
 
+    afterEach ->
+      button.parentNode.removeChild(button)
+
     it 'should track clicks on elements', ->
       wbp.trackUserActions('button', 'Buttons')
 
@@ -129,11 +132,11 @@ describe 'WildberryPrincess', ->
       ga_spy.should.have.been.calledWith 'send', payload
       payload = [
         "record",
-        "Buttons First Button Click",
+        "Buttons: First Button (Click)",
         {
           action: "Click"
           category: "Buttons"
-          label: "Buttons First Button Click"
+          label: "First Button"
         }
       ]
       kmq_spy.should.have.been.calledWith payload
@@ -158,11 +161,10 @@ describe 'WildberryPrincess', ->
       ga_spy.should.have.been.calledWith 'send', payload
       payload = [
         "record"
-        "Buttons null Click"
+        "Buttons: null (Click)"
         {
           action: "Click"
           category: "Buttons"
-          label: "Buttons null Click"
         }
       ]
       kmq_spy.should.have.been.calledWith payload
@@ -189,11 +191,11 @@ describe 'WildberryPrincess', ->
       kmq_spy.should.have.been.calledOnce
       payload = [
         "record"
-        "Buttons First Button Click"
+        "Buttons: First Button (Click)"
         {
           action: "Click"
           category: "Buttons"
-          label: "Buttons First Button Click"
+          label: "First Button"
           value: 1
         }
       ]
@@ -201,6 +203,17 @@ describe 'WildberryPrincess', ->
 
     it 'should return when there is no event', ->
       wbp.clickHandler()
+
+      wbp_click_spy.should.have.been.calledOnce
+      ga_send_spy.should.not.have.been.calledOnce
+      km_send_spy.should.not.have.been.calledOnce
+      ga_spy.should.not.have.been.calledOnce
+      kmq_spy.should.not.have.been.calledOnce
+
+    it 'should return when there is no eventParams', ->
+      click_event = document.createEvent('HTMLEvents')
+      click_event.initEvent('click', true, false)
+      wbp.clickHandler(click_event)
 
       wbp_click_spy.should.have.been.calledOnce
       ga_send_spy.should.not.have.been.calledOnce
@@ -264,13 +277,18 @@ describe 'WildberryPrincess', ->
     it 'should call trackEventKM with the correct params', ->
       track_event_km_spy.callCount.should.equal 0
       wbp.trackEvent 'a', 'b', 'c', 'd'
-      track_event_km_spy.should.have.been.calledWith 'a c b', { action: "b", category: "a", label: "a c b", value: "d" }
+      track_event_km_spy.should.have.been.calledWith 'a: c (b)', { action: "b", category: "a", label: "c", value: "d" }
 
     it 'should not call trackEventKM when KM is disabled', ->
       wbp = new WildberryPrincess(useKissMetrics: false)
       track_event_km_spy.callCount.should.equal 0
       wbp.trackEvent 'a', 'b', 'c', 'd'
       track_event_km_spy.callCount.should.equal 0
+
+    it 'should exclude label and value when not set', ->
+      track_event_km_spy.callCount.should.equal 0
+      wbp.trackEvent 'a', 'b'
+      track_event_km_spy.should.have.been.calledWith 'a: undefined (b)', { action: "b", category: "a" }
 
   describe '#trackEventGA', ->
     wbp_spy = null

@@ -1,6 +1,6 @@
 {
   "name": "wildberry-princess",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "JavaScript library for abstracting out Google Analytics (analytics.js) and Kissmetrics.",
   "author": "Matthew Callis <Matthew Callis>",
   "contributors": [

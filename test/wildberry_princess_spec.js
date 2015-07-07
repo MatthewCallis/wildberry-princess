@@ -113,6 +113,9 @@
         button.setAttribute('data-event-label', 'First Button');
         return document.body.appendChild(button);
       });
+      afterEach(function() {
+        return button.parentNode.removeChild(button);
+      });
       it('should track clicks on elements', function() {
         var click_event;
         wbp.trackUserActions('button', 'Buttons');
@@ -131,10 +134,10 @@
         };
         ga_spy.should.have.been.calledWith('send', payload);
         payload = [
-          "record", "Buttons First Button Click", {
+          "record", "Buttons: First Button (Click)", {
             action: "Click",
             category: "Buttons",
-            label: "Buttons First Button Click"
+            label: "First Button"
           }
         ];
         return kmq_spy.should.have.been.calledWith(payload);
@@ -157,10 +160,9 @@
         };
         ga_spy.should.have.been.calledWith('send', payload);
         payload = [
-          "record", "Buttons null Click", {
+          "record", "Buttons: null (Click)", {
             action: "Click",
-            category: "Buttons",
-            label: "Buttons null Click"
+            category: "Buttons"
           }
         ];
         return kmq_spy.should.have.been.calledWith(payload);
@@ -185,10 +187,10 @@
         ga_spy.should.have.been.calledWith('send', payload);
         kmq_spy.should.have.been.calledOnce;
         payload = [
-          "record", "Buttons First Button Click", {
+          "record", "Buttons: First Button (Click)", {
             action: "Click",
             category: "Buttons",
-            label: "Buttons First Button Click",
+            label: "First Button",
             value: 1
           }
         ];
@@ -196,6 +198,17 @@
       });
       it('should return when there is no event', function() {
         wbp.clickHandler();
+        wbp_click_spy.should.have.been.calledOnce;
+        ga_send_spy.should.not.have.been.calledOnce;
+        km_send_spy.should.not.have.been.calledOnce;
+        ga_spy.should.not.have.been.calledOnce;
+        return kmq_spy.should.not.have.been.calledOnce;
+      });
+      it('should return when there is no eventParams', function() {
+        var click_event;
+        click_event = document.createEvent('HTMLEvents');
+        click_event.initEvent('click', true, false);
+        wbp.clickHandler(click_event);
         wbp_click_spy.should.have.been.calledOnce;
         ga_send_spy.should.not.have.been.calledOnce;
         km_send_spy.should.not.have.been.calledOnce;
@@ -257,20 +270,28 @@
       it('should call trackEventKM with the correct params', function() {
         track_event_km_spy.callCount.should.equal(0);
         wbp.trackEvent('a', 'b', 'c', 'd');
-        return track_event_km_spy.should.have.been.calledWith('a c b', {
+        return track_event_km_spy.should.have.been.calledWith('a: c (b)', {
           action: "b",
           category: "a",
-          label: "a c b",
+          label: "c",
           value: "d"
         });
       });
-      return it('should not call trackEventKM when KM is disabled', function() {
+      it('should not call trackEventKM when KM is disabled', function() {
         wbp = new WildberryPrincess({
           useKissMetrics: false
         });
         track_event_km_spy.callCount.should.equal(0);
         wbp.trackEvent('a', 'b', 'c', 'd');
         return track_event_km_spy.callCount.should.equal(0);
+      });
+      return it('should exclude label and value when not set', function() {
+        track_event_km_spy.callCount.should.equal(0);
+        wbp.trackEvent('a', 'b');
+        return track_event_km_spy.should.have.been.calledWith('a: undefined (b)', {
+          action: "b",
+          category: "a"
+        });
       });
     });
     describe('#trackEventGA', function() {

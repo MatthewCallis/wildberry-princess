@@ -32,11 +32,11 @@ class WildberryPrincess
   clickHandler: (event) =>
     return unless event
     element = event.target
-    eventParams = element.data?.eventParams
+    return unless element
 
-    return  unless eventParams
+    eventParams = element.data.eventParams
 
-    label = @getLabel(element)  unless label = eventParams.label
+    label = if eventParams.label then eventParams.label else @getLabel(element)
 
     if @settings.useGoogleAnalytics
       payload =
@@ -49,14 +49,13 @@ class WildberryPrincess
       @sendPayloadGA payload
 
     if @settings.useKissMetrics
-      label = "#{eventParams.category} #{label} #{eventParams.action}"
       payload =
         category: eventParams.category
         action:   eventParams.action
       payload.label = label  if label
       payload.value = eventParams.value  if eventParams.value
 
-      @trackEventKM label, payload
+      @trackEventKM "#{eventParams.category}: #{label} (#{eventParams.action})", payload
 
     return
 
@@ -65,14 +64,13 @@ class WildberryPrincess
       @trackEventGA(category, action, label, value)
 
     if @settings.useKissMetrics
-      label = "#{category} #{label} #{action}"
       payload =
         category: category
         action:   action
       payload.label = label  if label
       payload.value = value  if value
 
-      @trackEventKM label, payload
+      @trackEventKM "#{category}: #{label} (#{action})", payload
 
   trackEventGA: (category, action, label, value) =>
     payload =

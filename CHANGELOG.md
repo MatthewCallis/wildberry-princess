@@ -1,3 +1,8 @@
+## 1.2.1 (July 6th, 2015)
+
+* Simplify some branching logic.
+* Better handing of labels for Kissmetrics.
+
 ## 1.2 (July 6th, 2015)
 
 * Added support for Kissmetrics.
