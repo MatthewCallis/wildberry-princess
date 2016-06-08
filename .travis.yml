@@ -1,7 +1,6 @@
 language: node_js
 node_js:
-  - 0.12
-  - iojs
+  - "stable"
 env:
   - CODECLIMATE_REPO_TOKEN=9ffe8abc7638fd859bf081174225ff9846ee5a476c8793bd4e8cc3ec90dae358
 before_install:
