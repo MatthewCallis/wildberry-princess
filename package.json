@@ -2,11 +2,12 @@
   "name": "wildberry-princess",
   "version": "1.2.1",
   "description": "JavaScript library for abstracting out Google Analytics (analytics.js) and Kissmetrics.",
-  "author": "Matthew Callis <Matthew Callis>",
+  "author": "Matthew Callis <matthew.callis@gmail.com>",
+  "homepage": "https://github.com/MatthewCallis/wildberry-princess",
   "contributors": [
     {
       "name": "Matthew Callis",
-      "email": "Matthew Callis"
+      "email": "matthew.callis@gmail.com"
     }
   ],
   "main": "dist/wildberry-princess.min.js",
@@ -25,13 +26,13 @@
   "dependencies": {},
   "devDependencies": {
     "chai": "^3.0.0",
-    "codeclimate-test-reporter": "^0.1.0",
+    "codeclimate-test-reporter": "^0.3.2",
     "coffee-script": "^1.9.3",
     "coveralls": "^2.11.2",
     "jquery": "^2",
     "mocha": "^2.2.5",
     "mocha-istanbul": "^0.2.0",
-    "mocha-lcov-reporter": "^0.0.2",
+    "mocha-lcov-reporter": "^1.2.0",
     "sinon": "^1.15.4",
     "sinon-chai": "^2.8.0",
     "uglify-js": "^2.4.23"
