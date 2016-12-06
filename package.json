@@ -18,6 +18,8 @@
     }
   ],
   "main": "dist/wildberry-princess.js",
+  "module": "src/wildberry-princess.js",
+  "jsnext:main": "src/wildberry-princess.js",
   "files": [
     "dist/wildberry-princess.js",
     "src/wildberry-princess.js"
