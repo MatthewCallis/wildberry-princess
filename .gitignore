@@ -1,6 +1,8 @@
-.DS_Store
-node_modules/
 .coveralls.yml
+.DS_Store
+.nyc_output/
+build-coverage/
 coverage/
 lib-cov
-build-coverage/
+node_modules/
+npm-debug.log

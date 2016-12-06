@@ -14,60 +14,63 @@ Wildberry Princess is a JavaScript library for abstracting out Google Analytics 
 
 ## Usage
 
-```coffeescript
-# Google Analytics initialized somewhere...
-# Kissmetrics initialized somewhere...
+```javascript
+// Google Analytics initialized somewhere...
+// Kissmetrics initialized somewhere...
 
-# Setup
-analytics = new WildberryPrincess(
-  useGoogleAnalytics: true
-  useKissMetrics: true
-)
+// Setup
+const analytics = new WildberryPrincess({
+  useGoogleAnalytics: true,
+  useKissMetrics: false,
+});
 
-# Set dimensions and users.
-analytics.identify(current_user_id) if current_user_id?
-analytics.set('dimension1', app_id)  if app_id?
+// Set dimensions and users.
+if (current_user_id != null) {
+  analytics.identify(current_user_id);
+}
 
-# Or more specifically:
-analytics.setGA('dimension1', app_id)  if app_id?
-analytics.setKM('app_id', app_id)  if app_id?
+if (app_id != null) {
+  analytics.set('dimension1', app_id);
+}
 
-# Track user actions, specifically clicks, where the label is the text content (button, div, tab, etc.) or form input name (input, select, textarea).
-# analytics.trackUserActions(selector, category, action, label, value)
-analytics.trackUserActions('button', 'Button')
-analytics.trackUserActions('input, select, textarea', 'Form Input')
-analytics.trackUserActions('tab', 'Tab')
+// Track user actions, specifically clicks, where the label is the text content (button, div, tab, etc.) or form input name (input, select, textarea).
+// analytics.trackUserActions(selector, category, action, label, value)
+analytics.trackUserActions('button', 'Button');
+analytics.trackUserActions('input, select, textarea', 'Form Input');
+analytics.trackUserActions('tab', 'Tab');
 
-# Send events anywhere, like Backbone model actions.
-# analytics.trackEvent(category, action, label, value)
-# analytics.trackEventGA(category, action, label, value)
-# analytics.trackEventKM(label, payload)
-analytics.trackEvent('Model', 'Destroy', @constructorName)
+// Send events anywhere, like Backbone model actions.
+// analytics.trackEvent(category, action, label, value)
+analytics.trackEvent('Model', 'Destroy', this.constructorName);
 
-# Track page views. Currently, KissMetrics is not included here to avoid event bloat.
-Apptentive.analytics.trackPageView('/fake-page', 'A Cool Fake Title')
+// Track page views. Currently
+// NOTE: KissMetrics is not included here to avoid event bloat 🤑
+Apptentive.analytics.trackPageView('/fake-page', 'A Cool Fake Title');
 
-# Send eCommerce data.
-transaction_id = "#{@model.id}_#{Date.now()}"
-transaction =
-  id:          transaction_id
-  affiliation: "Candy Kingdom"
-  revenue:     price
-  shipping:    '0'
-  tax:         '0'
+// Send eCommerce data.
+const transaction_id = `${this.model.id}_${Date.now()}`;
+const transaction = {
+  id: transaction_id,
+  affiliation: 'Candy Kingdom',
+  revenue: price,
+  shipping: '0',
+  tax: '0',
+};
+const item = {
+  id: transaction_id,
+  name,
+  category,
+  price,
+  quantity: 1,
+};
 
-item =
-  id:       transaction_id
-  name:     name
-  category: category
-  price:    price
-  quantity: 1
-
-analytics.trackEcommerce('clear')
-analytics.trackEcommerce('addTransaction', transaction)
-analytics.trackEcommerce('addItem', item)
-analytics.trackEcommerce('send')
+analytics.trackEcommerce('clear');
+analytics.trackEcommerce('addTransaction', transaction);
+analytics.trackEcommerce('addItem', item);
+analytics.trackEcommerce('send');
 ```
+
+For more advanced use, please refer to the source.
 
 ### Testing
 
@@ -81,6 +84,13 @@ npm run make-dist-min
 # or
 npm run lint && npm run make && npm run instrument && npm run test-phantomjs && npm run coverage-report && npm run make-dist-min
 ```
+
+## Useful Reading
+
+- [Analytics.js Field Reference](https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference)
+- [Cookies and User Identification](https://developers.google.com/analytics/devguides/collection/analyticsjs/cookies-user-id)
+- [Custom Dimensions and Metrics](https://developers.google.com/analytics/devguides/collection/analyticsjs/custom-dims-mets)
+- [Event Tracking](https://developers.google.com/analytics/devguides/collection/analyticsjs/events)
 
 ## Contributing
 

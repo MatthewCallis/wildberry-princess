@@ -1,7 +1,13 @@
-support
+.coveralls.yml
+.DS_Store
+.nyc_output/
 assets
 assets_source
-tmp
-.DS_Store
+build-coverage/
 config.json
+coverage/
+lib-cov
+node_modules/
 npm-debug.log
+support
+tmp
