@@ -1,0 +1,30 @@
+{
+  "extends": "airbnb",
+  "plugins": [
+    "ava",
+    "no-inferred-method-name",
+    "xss",
+  ],
+  "env": {
+    "es6": true,
+    "browser": true,
+  },
+  "globals": {
+    "sinon": false,
+    "expect": true,
+  },
+  # Custom Disabled Rules
+  rules: {
+    camelcase: 0,
+    max-len: 0,
+    no-param-reassign: 0,
+    no-unused-vars: ["error", { "varsIgnorePattern": "^(_|Apptentive)", "argsIgnorePattern": "^_", "caughtErrors": "none" }],
+    no-plusplus: 0, # Meaningless as other rules prevent the errors that could happens.
+    # Rules dependent on external APIs that would otherwise break rules or be needlessly complex:
+    no-underscore-dangle: 0,
+    no-restricted-syntax: 0,
+    no-empty: ["error", { "allowEmptyCatch": true }],
+    "import/no-extraneous-dependencies": 0,
+    "class-methods-use-this": 0 # Breaks Ava testing when using static method due to transpiled code.
+  }
+}
