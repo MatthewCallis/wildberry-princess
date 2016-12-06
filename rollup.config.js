@@ -21,7 +21,7 @@ rollup({
 })
 .then(bundle => (
   bundle.write({
-    format: 'iife', // amd, cjs, es, iife, umd
+    format: 'es', // amd, cjs, es, iife, umd
     moduleName: 'WildberryPrincess',
     dest: 'dist/wildberry-princess.js',
   })
