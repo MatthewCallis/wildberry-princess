@@ -10,14 +10,33 @@
       "email": "matthew.callis@gmail.com"
     }
   ],
-  "main": "dist/wildberry-princess.min.js",
-  "files": [
-    "dist/wildberry-princess.min.js"
+  "maintainers": [
+    {
+      "name": "Matthew Callis",
+      "email": "matthew.callis@gmail.com",
+      "web": "https://eludevisibility.org"
+    }
   ],
+  "main": "dist/wildberry-princess.js",
+  "files": [
+    "dist/wildberry-princess.js"
+  ],
+  "directories": {
+    "lib": "dist",
+    "src": "src",
+    "test": "test"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/MatthewCallis/wildberry-princess"
   },
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/MatthewCallis/wildberry-princess.git",
+      "path": "MatthewCallis/wildberry-princess"
+    }
+  ],
   "bugs": {
     "url": "https://github.com/MatthewCallis/wildberry-princess/issues"
   },
@@ -60,6 +79,12 @@
   "preferGlobal": false,
   "private": false,
   "license": "MIT",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://raw.githubusercontent.com/MatthewCallis/wildberry-princess/master/LICENSE" 
+    }
+  ],
   "jam": {
     "dependencies": {}
   },
