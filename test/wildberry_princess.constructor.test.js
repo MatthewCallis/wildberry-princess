@@ -1,5 +1,5 @@
 import test from 'ava';
-import WildberryPrincess from '../src/wildberry_princess';
+import WildberryPrincess from '../src/wildberry-princess';
 
 let wbp;
 

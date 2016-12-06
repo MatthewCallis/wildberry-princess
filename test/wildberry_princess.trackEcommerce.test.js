@@ -1,6 +1,6 @@
 import test from 'ava';
 import sinon from 'sinon';
-import WildberryPrincess from '../src/wildberry_princess';
+import WildberryPrincess from '../src/wildberry-princess';
 
 let ga_spy;
 let wbp;

@@ -19,7 +19,8 @@
   ],
   "main": "dist/wildberry-princess.js",
   "files": [
-    "dist/wildberry-princess.js"
+    "dist/wildberry-princess.js",
+    "src/wildberry-princess.js"
   ],
   "directories": {
     "lib": "dist",

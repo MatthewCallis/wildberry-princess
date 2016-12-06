@@ -5,7 +5,7 @@ const json = require('rollup-plugin-json');
 const eslint = require('rollup-plugin-eslint');
 
 rollup({
-  entry: 'src/wildberry_princess.js',
+  entry: 'src/wildberry-princess.js',
   plugins: [
     eslint(),
     json({
