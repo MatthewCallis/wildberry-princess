@@ -24,75 +24,6 @@ var createClass = function () {
   };
 }();
 
-
-
-
-
-
-
-var get = function get(object, property, receiver) {
-  if (object === null) object = Function.prototype;
-  var desc = Object.getOwnPropertyDescriptor(object, property);
-
-  if (desc === undefined) {
-    var parent = Object.getPrototypeOf(object);
-
-    if (parent === null) {
-      return undefined;
-    } else {
-      return get(parent, property, receiver);
-    }
-  } else if ("value" in desc) {
-    return desc.value;
-  } else {
-    var getter = desc.get;
-
-    if (getter === undefined) {
-      return undefined;
-    }
-
-    return getter.call(receiver);
-  }
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var set$1 = function set$1(object, property, value, receiver) {
-  var desc = Object.getOwnPropertyDescriptor(object, property);
-
-  if (desc === undefined) {
-    var parent = Object.getPrototypeOf(object);
-
-    if (parent !== null) {
-      set$1(parent, property, value, receiver);
-    }
-  } else if ("value" in desc && desc.writable) {
-    desc.value = value;
-  } else {
-    var setter = desc.set;
-
-    if (setter !== undefined) {
-      setter.call(receiver, value);
-    }
-  }
-
-  return value;
-};
-
 var WildberryPrincess = function () {
   function WildberryPrincess() {
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -109,7 +40,9 @@ var WildberryPrincess = function () {
 
     var defaults$$1 = {
       useGoogleAnalytics: true,
-      useKissMetrics: true
+      useKissMetrics: true,
+      useFullStory: true,
+      useSegment: true
     };
     this.settings = Object.assign({}, defaults$$1, options);
   }
@@ -206,6 +139,20 @@ var WildberryPrincess = function () {
 
         this.trackEventKM(category + ': ' + label + ' (' + action + ')', payload);
       }
+
+      if (this.settings.useSegment) {
+        var properties = {
+          category: category
+        };
+        if (label) {
+          properties.label = label;
+        }
+        if (value) {
+          properties.value = value;
+        }
+
+        this.trackEventSegment(action, properties);
+      }
     }
   }, {
     key: 'trackPageView',
@@ -236,7 +183,7 @@ var WildberryPrincess = function () {
     }
   }, {
     key: 'set',
-    value: function set(key, value) {
+    value: function set$$1(key, value) {
       if (this.settings.useGoogleAnalytics) {
         this.setGA(key, value);
       }
@@ -247,16 +194,35 @@ var WildberryPrincess = function () {
   }, {
     key: 'identify',
     value: function identify() {
-      var user_id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'anonymous';
+      var user = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { id: 'anonymous' };
 
       // https://developers.google.com/analytics/devguides/collection/analyticsjs/user-id
       // https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#userId
       // http://support.kissmetrics.com/apis/common-methods#identify
-      if (this.settings.useGoogleAnalytics && user_id !== 'anonymous') {
-        this.setGA('userId', user_id);
+      if (this.settings.useGoogleAnalytics && user.id !== 'anonymous') {
+        this.setGA('userId', user.id);
       }
       if (this.settings.useKissMetrics) {
-        this.sendPayloadKM('identify', user_id);
+        this.sendPayloadKM('identify', user.id);
+      }
+
+      // http://help.fullstory.com/develop-js/identify
+      // http://help.fullstory.com/develop-js/setuservars
+      if (this.settings.useFullStory && window.FS != null && user.id !== 'anonymous') {
+        window.FS.identify(user.id, {
+          displayName: user.name,
+          email: user.email
+        });
+      }
+
+      // https://segment.com/docs/spec/identify/
+      if (this.settings.useSegment && user.id !== 'anonymous') {
+        if (window.analytics != null) {
+          window.analytics.identify(user.id, {
+            name: user.name,
+            email: user.email
+          });
+        }
       }
     }
   }, {
@@ -296,6 +262,16 @@ var WildberryPrincess = function () {
     key: 'trackEventKM',
     value: function trackEventKM(label, payload) {
       this.sendPayloadKM('record', label, payload);
+    }
+  }, {
+    key: 'trackEventSegment',
+    value: function trackEventSegment(event) {
+      var properties = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+      if (window.analytics != null) {
+        window.analytics.track(event, properties, options);
+      }
     }
   }, {
     key: 'setGA',

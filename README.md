@@ -10,13 +10,15 @@
 
 _-- "I found this note stabbed to my door! ... man."_
 
-Wildberry Princess is a JavaScript library for abstracting out Google Analytics (analytics.js), KissMetrics, and perhaps other analytics platforms in the future.
+Wildberry Princess is a JavaScript library for abstracting out Google Analytics (analytics.js), KissMetrics, Segment.io, FullStory and perhaps other analytics platforms in the future.
 
 ## Usage
 
 ```javascript
 // Google Analytics initialized somewhere...
 // Kissmetrics initialized somewhere...
+// Segment.io initialized somewhere...
+// FullStory initialized somewhere...
 
 // Setup
 const analytics = new WildberryPrincess({
@@ -45,7 +47,7 @@ analytics.trackEvent('Model', 'Destroy', this.constructorName);
 
 // Track page views. Currently
 // NOTE: KissMetrics is not included here to avoid event bloat 🤑
-Apptentive.analytics.trackPageView('/fake-page', 'A Cool Fake Title');
+apptentive.analytics.trackPageView('/fake-page', 'A Cool Fake Title');
 
 // Send eCommerce data.
 const transaction_id = `${this.model.id}_${Date.now()}`;
@@ -77,20 +79,27 @@ For more advanced use, please refer to the source.
 ```shell
 npm run lint
 npm run make
-npm run instrument
-npm run test-phantomjs
-npm run coverage-report
+npm run test
+npm run report
 npm run make-dist-min
-# or
-npm run lint && npm run make && npm run instrument && npm run test-phantomjs && npm run coverage-report && npm run make-dist-min
 ```
 
 ## Useful Reading
 
+### Google Analytics
 - [Analytics.js Field Reference](https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference)
 - [Cookies and User Identification](https://developers.google.com/analytics/devguides/collection/analyticsjs/cookies-user-id)
 - [Custom Dimensions and Metrics](https://developers.google.com/analytics/devguides/collection/analyticsjs/custom-dims-mets)
 - [Event Tracking](https://developers.google.com/analytics/devguides/collection/analyticsjs/events)
+
+### Segment.io
+- [Track (Google Analytics)](https://segment.com/docs/integrations/google-analytics/#track)
+- [Track (Segment.io)](https://segment.com/docs/sources/website/analytics.js/#track)
+- [Identify](https://segment.com/docs/spec/identify/)
+
+# Contributors
+
+- [Owen Kim](https://github.com/owenkim) - Segment.io Support
 
 ## Contributing
 

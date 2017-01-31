@@ -12,6 +12,8 @@ export default class WildberryPrincess {
     const defaults = {
       useGoogleAnalytics: true,
       useKissMetrics: true,
+      useFullStory: true,
+      useSegment: true,
     };
     this.settings = Object.assign({}, defaults, options);
   }
@@ -83,6 +85,16 @@ export default class WildberryPrincess {
 
       this.trackEventKM(`${category}: ${label} (${action})`, payload);
     }
+
+    if (this.settings.useSegment) {
+      const properties = {
+        category,
+      };
+      if (label) { properties.label = label; }
+      if (value) { properties.value = value; }
+
+      this.trackEventSegment(action, properties);
+    }
   }
 
   trackPageView(page, title) {
@@ -114,15 +126,34 @@ export default class WildberryPrincess {
     }
   }
 
-  identify(user_id = 'anonymous') {
+  identify(user = { id: 'anonymous' }) {
     // https://developers.google.com/analytics/devguides/collection/analyticsjs/user-id
     // https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#userId
     // http://support.kissmetrics.com/apis/common-methods#identify
-    if (this.settings.useGoogleAnalytics && user_id !== 'anonymous') {
-      this.setGA('userId', user_id);
+    if (this.settings.useGoogleAnalytics && user.id !== 'anonymous') {
+      this.setGA('userId', user.id);
     }
     if (this.settings.useKissMetrics) {
-      this.sendPayloadKM('identify', user_id);
+      this.sendPayloadKM('identify', user.id);
+    }
+
+    // http://help.fullstory.com/develop-js/identify
+    // http://help.fullstory.com/develop-js/setuservars
+    if (this.settings.useFullStory && window.FS != null && user.id !== 'anonymous') {
+      window.FS.identify(user.id, {
+        displayName: user.name,
+        email: user.email,
+      });
+    }
+
+    // https://segment.com/docs/spec/identify/
+    if (this.settings.useSegment && user.id !== 'anonymous') {
+      if (window.analytics != null) {
+        window.analytics.identify(user.id, {
+          name: user.name,
+          email: user.email,
+        });
+      }
     }
   }
 
@@ -152,6 +183,12 @@ export default class WildberryPrincess {
 
   trackEventKM(label, payload) {
     this.sendPayloadKM('record', label, payload);
+  }
+
+  trackEventSegment(event, properties = {}, options = {}) {
+    if (window.analytics != null) {
+      window.analytics.track(event, properties, options);
+    }
   }
 
   setGA(key, value) {
