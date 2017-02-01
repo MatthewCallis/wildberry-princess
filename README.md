@@ -28,7 +28,7 @@ const analytics = new WildberryPrincess({
 
 // Set dimensions and users.
 if (current_user_id != null) {
-  analytics.identify(current_user_id);
+  analytics.identify({ id: current_user_id, name: 'Name', email: 'email@domain.tld' });
 }
 
 if (app_id != null) {
