@@ -7,10 +7,12 @@ let ga_spy;
 let kmq_spy;
 let ga_send_spy;
 let km_send_spy;
+let cio_spy;
 
 let track_event_ga_spy;
 let track_event_km_spy;
 let track_event_segment_spy;
+let track_event_customerio_spy;
 
 test.beforeEach((_t) => {
   window.ga = () => {};
@@ -19,6 +21,10 @@ test.beforeEach((_t) => {
   ga_spy = sinon.spy(window, 'ga');
   kmq_spy = sinon.spy(window._kmq, 'push');
 
+  window._cio = {};
+  window._cio.track = () => {};
+  cio_spy = sinon.spy(window._cio, 'track')
+
   window.analytics = {};
   window.analytics.track = () => {};
 
@@ -26,6 +32,7 @@ test.beforeEach((_t) => {
   track_event_ga_spy = sinon.spy(wbp, 'trackEventGA');
   track_event_km_spy = sinon.spy(wbp, 'trackEventKM');
   track_event_segment_spy = sinon.spy(wbp, 'trackEventSegment');
+  track_event_customerio_spy = sinon.spy(wbp, 'trackEventCustomerio');
   ga_send_spy = sinon.spy(wbp, 'sendPayloadGA');
   km_send_spy = sinon.spy(wbp, 'sendPayloadKM');
 });
@@ -71,6 +78,18 @@ test('#trackEvent: should exclude label and value when not set', (t) => {
   t.is(track_event_km_spy.callCount, 0);
   wbp.trackEvent('a', 'b');
   t.true(track_event_km_spy.calledWith('a: undefined (b)', { action: 'b', category: 'a' }));
+});
+
+test('#trackEvent: should call trackEventCustomerio when enabled', (t) => {
+  wbp.trackEvent('!category', '!event');
+  t.is(track_event_customerio_spy.callCount, 1);
+  t.true(track_event_customerio_spy.calledWith('!event', {'category' : '!category'}));
+});
+
+test('#trackEve t: should not call trackEventCustomerio when disabled', (t) => {
+  wbp = new WildberryPrincess({ useCustomerio: false });
+  wbp.trackEvent('!category', '!event');
+  t.is(track_event_customerio_spy.callCount, 0);
 });
 
 // trackEventGA
@@ -132,8 +151,14 @@ test('#trackEventKM: should track the event using sendPayloadKM', (t) => {
 });
 
 // trackEventSegment
-test('#trackEventSegment: should track the event using sendPayloadKM', (t) => {
+test('#trackEventSegment: should track the event using trackEventSegment', (t) => {
   wbp.trackEventSegment('!label', { '!key': '!value' });
   t.is(track_event_segment_spy.callCount, 1);
   t.true(track_event_segment_spy.calledWith('!label', { '!key': '!value' }));
+});
+
+test('#trackEventCustomerio: should call track', (t) => {
+  wbp.trackEventCustomerio('!label', { '!key': '!value' })
+  t.is(cio_spy.callCount, 1);
+  t.true(cio_cpy.calledWith('!label', { '!key': '!value' }))
 });

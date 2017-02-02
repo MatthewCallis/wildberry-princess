@@ -42,7 +42,8 @@ var WildberryPrincess = function () {
       useGoogleAnalytics: true,
       useKissMetrics: true,
       useFullStory: true,
-      useSegment: true
+      useSegment: true,
+      useCustomerio: true
     };
     this.settings = Object.assign({}, defaults$$1, options);
   }
@@ -153,6 +154,20 @@ var WildberryPrincess = function () {
 
         this.trackEventSegment(action, properties);
       }
+
+      if (this.settings.useCustomerio) {
+        var _properties = {
+          category: category
+        };
+        if (label) {
+          _properties.label = label;
+        }
+        if (value) {
+          _properties.value = value;
+        }
+
+        this.trackEventCustomerio(action, _properties);
+      }
     }
   }, {
     key: 'trackPageView',
@@ -224,6 +239,17 @@ var WildberryPrincess = function () {
           });
         }
       }
+
+      // https://customer.io/docs/api/javascript.html
+      if (this.settings.useCustomerio && user.id !== 'anonymous') {
+        if (window._cio != null) {
+          window._cio.identify({
+            id: user.id,
+            name: user.name,
+            email: user.email
+          });
+        }
+      }
     }
   }, {
     key: 'clearIdentity',
@@ -271,6 +297,15 @@ var WildberryPrincess = function () {
 
       if (window.analytics != null) {
         window.analytics.track(event, properties, options);
+      }
+    }
+  }, {
+    key: 'trackEventCustomerio',
+    value: function trackEventCustomerio(event) {
+      var properties = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      if (window._cio != null) {
+        window._cio.track(event, properties);
       }
     }
   }, {

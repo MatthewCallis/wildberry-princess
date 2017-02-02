@@ -14,6 +14,7 @@ export default class WildberryPrincess {
       useKissMetrics: true,
       useFullStory: true,
       useSegment: true,
+      useCustomerio: true,
     };
     this.settings = Object.assign({}, defaults, options);
   }
@@ -95,6 +96,16 @@ export default class WildberryPrincess {
 
       this.trackEventSegment(action, properties);
     }
+
+    if (this.settings.useCustomerio) {
+      const properties = {
+        category,
+      };
+      if (label) { properties.label = label; }
+      if (value) { properties.value = value; }
+
+      this.trackEventCustomerio(action, properties);
+    }
   }
 
   trackPageView(page, title) {
@@ -155,6 +166,17 @@ export default class WildberryPrincess {
         });
       }
     }
+
+    // https://customer.io/docs/api/javascript.html
+    if (this.settings.useCustomerio && user.id !== 'anonymous') {
+      if (window._cio != null) {
+        window._cio.identify({
+          id: user.id,
+          name: user.name,
+          email: user.email
+        });
+      }
+    }
   }
 
   clearIdentity() {
@@ -188,6 +210,12 @@ export default class WildberryPrincess {
   trackEventSegment(event, properties = {}, options = {}) {
     if (window.analytics != null) {
       window.analytics.track(event, properties, options);
+    }
+  }
+
+  trackEventCustomerio(event, properties = {}) {
+    if (window._cio != null) {
+      window._cio.track(event, properties);
     }
   }
 
