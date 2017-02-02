@@ -33,11 +33,12 @@ test('#constructor: should have known functions', (t) => {
 });
 
 test('#constructor: should have default setting', (t) => {
-  t.deepEqual(Object.keys(wbp.settings), ['useGoogleAnalytics', 'useKissMetrics', 'useFullStory', 'useSegment']);
+  t.deepEqual(Object.keys(wbp.settings), ['useGoogleAnalytics', 'useKissMetrics', 'useFullStory', 'useSegment', 'useCustomerio']);
   t.true(wbp.settings.useGoogleAnalytics);
   t.true(wbp.settings.useKissMetrics);
   t.true(wbp.settings.useFullStory);
   t.true(wbp.settings.useSegment);
+  t.true(wbp.settings.useCustomerio);
 });
 
 test('#constructor: should set the settings based on passed in configuration', (t) => {
@@ -46,33 +47,47 @@ test('#constructor: should set the settings based on passed in configuration', (
   t.true(wbp.settings.useKissMetrics);
   t.true(wbp.settings.useFullStory);
   t.true(wbp.settings.useSegment);
+  t.true(wbp.settings.useCustomerio);
 
   wbp = new WildberryPrincess({ useKissMetrics: false });
   t.true(wbp.settings.useGoogleAnalytics);
   t.false(wbp.settings.useKissMetrics);
   t.true(wbp.settings.useFullStory);
   t.true(wbp.settings.useSegment);
+  t.true(wbp.settings.useCustomerio);
 
   wbp = new WildberryPrincess({ useFullStory: false });
   t.true(wbp.settings.useGoogleAnalytics);
   t.true(wbp.settings.useKissMetrics);
   t.false(wbp.settings.useFullStory);
   t.true(wbp.settings.useSegment);
+  t.true(wbp.settings.useCustomerio);
 
   wbp = new WildberryPrincess({ useSegment: false });
   t.true(wbp.settings.useGoogleAnalytics);
   t.true(wbp.settings.useKissMetrics);
   t.true(wbp.settings.useFullStory);
   t.false(wbp.settings.useSegment);
+  t.true(wbp.settings.useCustomerio);
+
+  wbp = new WildberryPrincess({ useCustomerio: false });
+  t.true(wbp.settings.useGoogleAnalytics);
+  t.true(wbp.settings.useKissMetrics);
+  t.true(wbp.settings.useFullStory);
+  t.true(wbp.settings.useSegment);
+  t.false(wbp.settings.useCustomerio);
+
 
   wbp = new WildberryPrincess({
     useGoogleAnalytics: false,
     useKissMetrics: false,
     useFullStory: false,
     useSegment: false,
+    useCustomerio: false
   });
   t.false(wbp.settings.useGoogleAnalytics);
   t.false(wbp.settings.useKissMetrics);
   t.false(wbp.settings.useFullStory);
   t.false(wbp.settings.useSegment);
+  t.false(wbp.settings.useCustomerio);
 });

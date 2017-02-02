@@ -9,6 +9,7 @@ let kmq_spy;
 let setga_spy;
 let segment_spy;
 let fs_spy;
+let customerio_spy;
 
 test.beforeEach((_t) => {
   window.ga = () => {};
@@ -23,6 +24,10 @@ test.beforeEach((_t) => {
   window.FS = {};
   window.FS.identify = () => {};
   fs_spy = sinon.spy(window.FS, 'identify');
+
+  window._cio = {};
+  window._cio.identify = () => {};
+  customerio_spy = sinon.spy(window._cio, 'identify');
 
   wbp = new WildberryPrincess();
   setga_spy = sinon.spy(wbp, 'setGA');
@@ -132,4 +137,24 @@ test('#identify: should not call FullStory when useFullStory is disabled', (t) =
   t.is(fs_spy.callCount, 0);
   wbp.identify({ id: '1234', name: 'NAME', email: 'EMAIL' });
   t.is(fs_spy.callCount, 0);
+});
+
+test('#identify: should not call Customerio when useCustomerio is enabled without a user', (t) => {
+  t.is(customerio_spy.callCount, 0);
+  wbp.identify();
+  t.is(customerio_spy.callCount, 0);
+});
+
+test('#identify: should call Customerio when useCustomerio is enabled with an user', (t) => {
+  t.is(customerio_spy.callCount, 0);
+  wbp.identify({ id: '1234', name: 'NAME', email: 'EMAIL' });
+  t.is(customerio_spy.callCount, 1);
+  t.true(customerio_spy.calledWith({ id: '1234', name: 'NAME', email: 'EMAIL'}));
+});
+
+test('#identify: should not call Customerio when useCustomerio is disabled', (t) => {
+  wbp = new WildberryPrincess({ useCustomerio: false });
+  t.is(customerio_spy.callCount, 0);
+  wbp.identify({ id: '1234' });
+  t.is(customerio_spy.callCount, 0);
 });

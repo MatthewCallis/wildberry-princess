@@ -10,7 +10,7 @@
 
 _-- "I found this note stabbed to my door! ... man."_
 
-Wildberry Princess is a JavaScript library for abstracting out Google Analytics (analytics.js), KissMetrics, Segment.io, FullStory and perhaps other analytics platforms in the future.
+Wildberry Princess is a JavaScript library for abstracting out Google Analytics (analytics.js), KissMetrics, Segment.io, FullStory, Customer.io and perhaps other analytics platforms in the future.
 
 ## Usage
 
@@ -19,6 +19,7 @@ Wildberry Princess is a JavaScript library for abstracting out Google Analytics 
 // Kissmetrics initialized somewhere...
 // Segment.io initialized somewhere...
 // FullStory initialized somewhere...
+// Customer.io initialized somewhere...
 
 // Setup
 const analytics = new WildberryPrincess({
@@ -96,6 +97,10 @@ npm run make-dist-min
 - [Track (Google Analytics)](https://segment.com/docs/integrations/google-analytics/#track)
 - [Track (Segment.io)](https://segment.com/docs/sources/website/analytics.js/#track)
 - [Identify](https://segment.com/docs/spec/identify/)
+
+### Customer.io
+
+- [Javascript API](https://customer.io/docs/api/javascript.html)
 
 # Contributors
 
