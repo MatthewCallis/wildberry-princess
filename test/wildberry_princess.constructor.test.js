@@ -83,7 +83,7 @@ test('#constructor: should set the settings based on passed in configuration', (
     useKissMetrics: false,
     useFullStory: false,
     useSegment: false,
-    useCustomerio: false
+    useCustomerio: false,
   });
   t.false(wbp.settings.useGoogleAnalytics);
   t.false(wbp.settings.useKissMetrics);

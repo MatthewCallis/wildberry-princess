@@ -23,7 +23,7 @@ test.beforeEach((_t) => {
 
   window._cio = {};
   window._cio.track = () => {};
-  cio_spy = sinon.spy(window._cio, 'track')
+  cio_spy = sinon.spy(window._cio, 'track');
 
   window.analytics = {};
   window.analytics.track = () => {};
@@ -83,7 +83,7 @@ test('#trackEvent: should exclude label and value when not set', (t) => {
 test('#trackEvent: should call trackEventCustomerio when enabled', (t) => {
   wbp.trackEvent('!category', '!event');
   t.is(track_event_customerio_spy.callCount, 1);
-  t.true(track_event_customerio_spy.calledWith('!event', {'category' : '!category'}));
+  t.true(track_event_customerio_spy.calledWith('!event', { category: '!category' }));
 });
 
 test('#trackEve t: should not call trackEventCustomerio when disabled', (t) => {
@@ -158,7 +158,7 @@ test('#trackEventSegment: should track the event using trackEventSegment', (t) =
 });
 
 test('#trackEventCustomerio: should call track', (t) => {
-  wbp.trackEventCustomerio('!label', { '!key': '!value' })
+  wbp.trackEventCustomerio('!label', { '!key': '!value' });
   t.is(cio_spy.callCount, 1);
-  t.true(cio_cpy.calledWith('!label', { '!key': '!value' }))
+  t.true(cio_spy.calledWith('!label', { '!key': '!value' }));
 });

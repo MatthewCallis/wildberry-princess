@@ -149,7 +149,7 @@ test('#identify: should call Customerio when useCustomerio is enabled with an us
   t.is(customerio_spy.callCount, 0);
   wbp.identify({ id: '1234', name: 'NAME', email: 'EMAIL' });
   t.is(customerio_spy.callCount, 1);
-  t.true(customerio_spy.calledWith({ id: '1234', name: 'NAME', email: 'EMAIL'}));
+  t.true(customerio_spy.calledWith({ id: '1234', name: 'NAME', email: 'EMAIL' }));
 });
 
 test('#identify: should not call Customerio when useCustomerio is disabled', (t) => {

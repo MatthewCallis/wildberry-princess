@@ -173,7 +173,7 @@ export default class WildberryPrincess {
         window._cio.identify({
           id: user.id,
           name: user.name,
-          email: user.email
+          email: user.email,
         });
       }
     }
