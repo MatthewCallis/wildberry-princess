@@ -2,8 +2,13 @@
   "presets": [
     ["es2015"],
   ],
-  "plugins": [
-    "babel-plugin-espower",
-    "transform-object-rest-spread"
-  ]
+  "env": {
+    "test": {
+      "plugins": [
+        "istanbul",
+        "babel-plugin-espower",
+        "transform-object-rest-spread"
+      ]
+    }
+  }
 }

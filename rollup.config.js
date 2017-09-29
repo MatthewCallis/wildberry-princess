@@ -5,7 +5,7 @@ const json = require('rollup-plugin-json');
 const eslint = require('rollup-plugin-eslint');
 
 rollup({
-  entry: 'src/wildberry-princess.js',
+  input: 'src/wildberry-princess.js',
   plugins: [
     eslint(),
     json({
@@ -19,16 +19,16 @@ rollup({
     }),
   ],
 })
-.then(bundle => (
-  bundle.write({
-    format: 'cjs', // amd, cjs, es, iife, umd
-    moduleName: 'WildberryPrincess',
-    dest: 'dist/wildberry-princess.js',
+  .then(bundle => (
+    bundle.write({
+      format: 'cjs', // amd, cjs, es, iife, umd
+      name: 'WildberryPrincess',
+      file: 'dist/wildberry-princess.js',
+    })
+  ))
+  .then(() => {
+    console.log('Bundle Created');
   })
-))
-.then(() => {
-  console.log('Bundle Created');
-})
-.catch((e) => {
-  console.error('Rollup Error:', e);
-});
+  .catch((e) => {
+    console.error('Rollup Error:', e);
+  });
