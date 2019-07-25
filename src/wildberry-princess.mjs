@@ -1,4 +1,4 @@
-class WildberryPrincess {
+export default class WildberryPrincess {
   constructor(options = {}) {
     this.trackUserActions = this.trackUserActions.bind(this);
     this.clickHandler = this.clickHandler.bind(this);
@@ -152,17 +152,15 @@ class WildberryPrincess {
     // http://help.fullstory.com/develop-js/setuservars
     // Pass in customFields if provided - must be in the FullStory userVars format - see above
     if (this.settings.useFullStory && window.FS != null && user.id !== 'anonymous') {
-      const customFields = user.customFields ? user.customFields : {};
       window.FS.identify(user.id, {
         displayName: user.name,
         email: user.email,
-        ...customFields,
+        ...user.customFields,
       });
     }
 
     // https://segment.com/docs/spec/identify/
     if (this.settings.useSegment && user.id !== 'anonymous') {
-      /* istanbul ignore else */
       if (window.analytics != null) {
         window.analytics.identify(user.id, {
           name: user.name,
@@ -173,7 +171,6 @@ class WildberryPrincess {
 
     // https://customer.io/docs/api/javascript.html
     if (this.settings.useCustomerio && user.id !== 'anonymous') {
-      /* istanbul ignore else */
       if (window._cio != null) {
         window._cio.identify({
           id: user.id,
@@ -186,7 +183,6 @@ class WildberryPrincess {
 
   clearIdentity() {
     // http://support.kissmetrics.com/advanced/multiple-people-same-browser/
-    /* istanbul ignore else */
     if (this.settings.useKissMetrics) {
       this.sendPayloadKM('clearIdentity');
     }
@@ -214,21 +210,18 @@ class WildberryPrincess {
   }
 
   trackEventSegment(event, properties = {}, options = {}) {
-    /* istanbul ignore else */
     if (window.analytics != null) {
       window.analytics.track(event, properties, options);
     }
   }
 
   trackEventCustomerio(event, properties = {}) {
-    /* istanbul ignore else */
     if (window._cio != null) {
       window._cio.track(event, properties);
     }
   }
 
   setGA(key, value) {
-    /* istanbul ignore else */
     if (window.ga != null) {
       window.ga('set', key, value);
     }
@@ -241,7 +234,6 @@ class WildberryPrincess {
   }
 
   sendPayloadGA(payload) {
-    /* istanbul ignore else */
     if (window.ga != null) {
       window.ga('send', payload);
     }
@@ -258,5 +250,3 @@ class WildberryPrincess {
     }
   }
 }
-
-module.exports = WildberryPrincess;

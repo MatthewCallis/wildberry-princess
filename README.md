@@ -105,6 +105,7 @@ npm run make-dist-min
 # Contributors
 
 - [Owen Kim](https://github.com/owenkim) - Segment.io Support
+- [Democritos Tsellos](https://github.com/dtsellos03) - FullStory Custom Fields
 
 ## Contributing
 

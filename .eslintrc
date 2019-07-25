@@ -1,30 +1,59 @@
 {
-  "extends": "airbnb",
+  "extends": [
+    "airbnb",
+    "plugin:ava/recommended",
+    "plugin:node/recommended",
+    "plugin:ramda/recommended",
+    "plugin:security/recommended",
+    "plugin:unicorn/recommended"
+  ],
   "plugins": [
     "ava",
     "no-inferred-method-name",
-    "xss",
+    "node",
+    "optimize-regex",
+    "ramda",
+    "security",
+    "unicorn",
+    "xss"
   ],
   "env": {
     "es6": true,
     "browser": true,
+    "mocha": true
   },
   "globals": {
     "sinon": false,
-    "expect": true,
+    "mocha": true,
+    "expect": true
   },
-  # Custom Disabled Rules
-  rules: {
-    camelcase: 0,
-    max-len: 0,
-    no-param-reassign: 0,
-    no-unused-vars: ["error", { "varsIgnorePattern": "^(_|Apptentive)", "argsIgnorePattern": "^_", "caughtErrors": "none" }],
-    no-plusplus: 0, # Meaningless as other rules prevent the errors that could happens.
-    # Rules dependent on external APIs that would otherwise break rules or be needlessly complex:
-    no-underscore-dangle: 0,
-    no-restricted-syntax: 0,
-    no-empty: ["error", { "allowEmptyCatch": true }],
-    "import/no-extraneous-dependencies": 0,
-    "class-methods-use-this": 0 # Breaks Ava testing when using static method due to transpiled code.
+  "parserOptions": {
+    "ecmaVersion": 2018
+  },
+  "rules": {
+    "import/no-dynamic-require": 0,
+    "import/no-extraneous-dependencies": [
+      "error", {
+        "devDependencies": ["**/*.test.js", "**/test/**/*.js"],
+        "optionalDependencies": true,
+        "peerDependencies": false
+      }
+    ],
+    "node/no-unpublished-require": 0,
+    "camelcase": 0,
+    "global-require": 0,
+    "max-len": 0,
+    "no-empty": ["error", { "allowEmptyCatch": true }],
+    "no-param-reassign": 0,
+    "no-plusplus": 0,
+    "no-restricted-syntax": 0,
+    "no-underscore-dangle": 0,
+    "no-unused-vars": ["error", { "varsIgnorePattern": "^_", "argsIgnorePattern": "^_", "caughtErrors": "none" }],
+    "security/detect-object-injection": 0,
+    "optimize-regex/optimize-regex": "warn",
+    "unicorn/filename-case": 0,
+    "unicorn/prevent-abbreviations": 0,
+    "ava/no-only-test": 0,
+    "class-methods-use-this": 0,
   }
 }

@@ -1,5 +1,5 @@
-import test from 'ava';
-import WildberryPrincess from '../src/wildberry-princess';
+const test = require('ava');
+const WildberryPrincess = require('./../src/wildberry-princess');
 
 let wbp;
 

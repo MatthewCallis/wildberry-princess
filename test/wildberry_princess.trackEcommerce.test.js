@@ -1,39 +1,28 @@
-import test from 'ava';
-import sinon from 'sinon';
-import WildberryPrincess from '../src/wildberry-princess';
+const test = require('ava');
+const sinon = require('sinon');
+const WildberryPrincess = require('./../src/wildberry-princess');
 
-let ga_spy;
-let wbp;
-let transaction;
-let transaction_id;
-let item;
-
-test.beforeEach((_t) => {
-  window.ga = () => {};
-  window._kmq = {};
-  window._kmq.push = () => {};
-  ga_spy = sinon.spy(window, 'ga');
-
-  wbp = new WildberryPrincess();
-
-  transaction_id = `${Date.now()}`;
-  transaction = {
-    id: transaction_id,
-    affiliation: 'Candy Kingdom',
-    revenue: 123,
-    shipping: '0',
-    tax: '0',
-  };
-  item = {
-    id: transaction_id,
-    name: 'b',
-    category: 'a',
-    price: 123,
-    quantity: 1,
-  };
-});
+const transaction_id = `${Date.now()}`;
+const transaction = {
+  id: transaction_id,
+  affiliation: 'Candy Kingdom',
+  revenue: 123,
+  shipping: '0',
+  tax: '0',
+};
+const item = {
+  id: transaction_id,
+  name: 'b',
+  category: 'a',
+  price: 123,
+  quantity: 1,
+};
 
 test('#trackEcommerce: should send the payload when there is GA', (t) => {
+  window.ga = () => {};
+  const ga_spy = sinon.spy(window, 'ga');
+  const wbp = new WildberryPrincess();
+
   t.is(ga_spy.callCount, 0);
   wbp.trackEcommerce('clear');
   t.true(ga_spy.calledWith('ecommerce:clear'));
@@ -46,6 +35,10 @@ test('#trackEcommerce: should send the payload when there is GA', (t) => {
 });
 
 test('#trackEcommerce: should not send the payload when there is no GA', (t) => {
+  window.ga = () => {};
+  const ga_spy = sinon.spy(window, 'ga');
+  const wbp = new WildberryPrincess();
+
   window.ga = null;
   t.is(ga_spy.callCount, 0);
   wbp.trackEcommerce('clear');
