@@ -88,9 +88,7 @@
     "node": "^8.3.0"
   },
   "pre-commit": [
-    "make",
     "lint",
-    "validate",
     "test"
   ],
   "nyc": {
