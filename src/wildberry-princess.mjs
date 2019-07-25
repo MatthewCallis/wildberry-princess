@@ -152,10 +152,11 @@ export default class WildberryPrincess {
     // http://help.fullstory.com/develop-js/setuservars
     // Pass in customFields if provided - must be in the FullStory userVars format - see above
     if (this.settings.useFullStory && window.FS != null && user.id !== 'anonymous') {
+      const customFields = user.customFields ? user.customFields : {};
       window.FS.identify(user.id, {
         displayName: user.name,
         email: user.email,
-        ...user.customFields,
+        ...customFields,
       });
     }
 

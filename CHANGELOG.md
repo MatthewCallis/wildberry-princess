@@ -1,3 +1,7 @@
+## 4.0.1 (July 25th, 2019)
+
+* Forgot to update MJS file.
+
 ## 4.0.0 (July 25th, 2019)
 
 * Custom data support for FullStory - [dtsellos03](https://github.com/dtsellos03)
