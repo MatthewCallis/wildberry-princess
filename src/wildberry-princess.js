@@ -147,13 +147,15 @@ export default class WildberryPrincess {
     if (this.settings.useKissMetrics) {
       this.sendPayloadKM('identify', user.id);
     }
-
+    
     // http://help.fullstory.com/develop-js/identify
     // http://help.fullstory.com/develop-js/setuservars
+    // Pass in customFields if provided - must be in the FullStory userVars format - see above
     if (this.settings.useFullStory && window.FS != null && user.id !== 'anonymous') {
       window.FS.identify(user.id, {
         displayName: user.name,
         email: user.email,
+        ...user.customFields,
       });
     }
 
